@@ -1,0 +1,36 @@
+import 'package:bloc/bloc.dart';
+import 'package:equatable/equatable.dart';
+
+// الأحداث
+abstract class VolunteerProfileEvent extends Equatable {
+  @override
+  List<Object> get props => [];
+}
+
+class LoadVolunteerProfileStatus extends VolunteerProfileEvent {}
+
+class CreateVolunteerProfile extends VolunteerProfileEvent {}
+
+// الحالة
+class VolunteerProfileState extends Equatable {
+  final bool hasProfile;
+
+  const VolunteerProfileState({required this.hasProfile});
+
+  @override
+  List<Object> get props => [hasProfile];
+}
+
+// الـ Bloc
+class VolunteerProfileBloc extends Bloc<VolunteerProfileEvent, VolunteerProfileState> {
+  VolunteerProfileBloc() : super(const VolunteerProfileState(hasProfile: false)) {
+    on<LoadVolunteerProfileStatus>((event, emit) {
+      // هنا ممكن تجيب من قاعدة بيانات لو عندك، مثلاً false مؤقتاً
+      emit(const VolunteerProfileState(hasProfile: false));
+    });
+
+    on<CreateVolunteerProfile>((event, emit) {
+      emit(const VolunteerProfileState(hasProfile: true));
+    });
+  }
+}

@@ -1,0 +1,162 @@
+import 'package:flutter/material.dart';
+import 'package:hello/core/color.dart';
+
+
+class GlobalDonationFab extends StatelessWidget {
+  static final ValueNotifier<bool> isExpandedNotifier = ValueNotifier<bool>(true);
+
+  const GlobalDonationFab({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<bool>(
+      valueListenable: isExpandedNotifier,
+      builder: (context, isExpanded, _) {
+        double width = isExpanded ? 180 : 56;
+        return AnimatedContainer(
+          duration: Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+          width: width,
+          height: 52,
+          margin: EdgeInsets.only(left: 16, bottom: 70),
+          child: FloatingActionButton.extended(
+            heroTag: "global_donation_fab",
+            backgroundColor: Color.fromARGB(255, 247, 119, 134),
+       onPressed: () {
+  showModalBottomSheet(
+    context: context,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+    ),
+    builder: (context) {
+      TextEditingController amountController = TextEditingController();
+      TextEditingController walletPasswordController = TextEditingController();
+
+      return StatefulBuilder(
+        builder: (context, setState) => Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Center(
+                child: Container(
+                  width: 50,
+                  height: 5,
+                  decoration: BoxDecoration(
+                    color: Color.fromARGB(255, 247, 119, 134),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+              SizedBox(height: 12),
+              Center(
+                child: Text(
+                  "تبرع سريع",
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: zeti),
+                ),
+              ),
+              SizedBox(height: 12),
+
+               Center(
+                child: Text(
+                  "سيذهب تبرعك تلقائيًا لأحد الحالات الطارئة",
+                  style: TextStyle(fontSize: 14, color: medium_Green, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              SizedBox(height: 16),
+              TextFormField(
+                controller: amountController,
+                textAlign: TextAlign.right,
+                textDirection: TextDirection.rtl,
+                keyboardType: TextInputType.number,
+                decoration: InputDecoration(
+                  hintText: 'أدخل المبلغ',
+                  filled: true,
+                  fillColor: babygreen.withOpacity(0.3),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: dark_Green, width: 1.5),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: babygreen.withOpacity(0.3)),
+                  ),
+                ),
+                cursorColor: dark_Green,
+                style: TextStyle(color: dark_Green),
+              ),
+              SizedBox(height: 12),
+              TextFormField(
+                controller: walletPasswordController,
+                textAlign: TextAlign.right,
+                textDirection: TextDirection.rtl,
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: 'أدخل كلمة سر المحفظة',
+                  filled: true,
+                  fillColor: babygreen.withOpacity(0.3),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: dark_Green, width: 1.5),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide(color: babygreen.withOpacity(0.3)),
+                  ),
+                ),
+                cursorColor: dark_Green,
+                style: TextStyle(color: dark_Green),
+              ),
+             
+              SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  if (amountController.text.isEmpty || walletPasswordController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text("يرجى تعبئة المبلغ وكلمة سر المحفظة"),backgroundColor:  Color.fromARGB(255, 247, 119, 134),
+                      ),
+                    );
+                    return;
+                  }
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("تم التبرع بمبلغ ${amountController.text} ", ),backgroundColor:  Color.fromARGB(255, 247, 119, 134),
+                    ),
+                  );
+                },
+                child: Text("تم", style: TextStyle(fontSize: 16)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: medium_Green,
+                  foregroundColor: Colors.white,
+                  minimumSize: Size(double.infinity, 50),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    },
+  );
+},
+  label: width > 100
+                ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Icon(Icons.volunteer_activism, color: Colors.white),
+                      SizedBox(width: 8),
+                      Text("التبرع السريع", style: TextStyle(color: Colors.white, fontSize: 18)),
+                    ],
+                  )
+                : Icon(Icons.volunteer_activism, color: Colors.white),
+          )
+          
+          );
+          }
+          );
+          }
+}
