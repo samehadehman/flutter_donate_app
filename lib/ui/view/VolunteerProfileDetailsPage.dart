@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hello/core/color.dart';
-import 'package:hello/pages/volunteer_profile_form_page.dart';
+import 'package:hello/ui/view/volunteer_profile_form_page.dart';
 
 
 class VolunteerProfileDetailsPage extends StatelessWidget {
@@ -46,13 +46,12 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Image.asset(
-                'lib/images/logo2.png',
+                'assets/images/logo2.png',
                 height: 60,
                 width: 60,
               ),
             ),
 
-            // ✅ الزر في الأعلى اليمين
             Positioned(
               top: 20,
               right: 16,
@@ -72,7 +71,6 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
               ),
             ),
 
-            // ✅ النص في الأعلى اليسار
             Positioned(
               top: 20,
               left: 16,
@@ -197,6 +195,7 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: Colors.black87,
+                       fontFamily: 'Zain',
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -206,6 +205,7 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
                       fontSize: 14,
                       color: Colors.black54,
                       height: 1.4,
+                       fontFamily: 'Zain',
                     ),
                     textAlign: TextAlign.right,
                   ),

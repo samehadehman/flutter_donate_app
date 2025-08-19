@@ -1,18 +1,14 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hello/blocs/auth/login_cubit.dart';
-import 'package:hello/pages/VolunteerProfileDetailsPage.dart';
-import 'package:hello/pages/forget_pass.dart';
-import 'package:hello/pages/profileEditPage.dart';
-import 'package:hello/pages/reset_pass.dart';
-import 'package:hello/pages/verification.dart';
-import 'package:hello/pages/volunteer_profile_form_page.dart';
+import 'package:hello/blocs/forgetpass/forget_bloc.dart';
+import 'package:hello/ui/view/case_form_page.dart';
+import 'package:hello/ui/view/forget_pass.dart';
+import 'package:hello/ui/view/reset_pass.dart';
+import 'package:hello/ui/view/verification.dart';
 import 'package:hello/services/auth.dart';
-import 'package:hello/pages/home_page.dart';
-import 'package:hello/pages/loginpage.dart';
-import 'package:hello/pages/signuppage.dart';
+import 'package:hello/ui/view/home_page.dart';
+import 'package:hello/ui/view/loginpage.dart';
+import 'package:hello/ui/view/signuppage.dart';
 import 'blocs/auth/auth_bloc.dart';
 
 
@@ -28,22 +24,26 @@ class MyApp extends StatelessWidget {
 
     return MultiBlocProvider(
       
-      providers: [
-        BlocProvider(create: (_) => LoginCubit()),
-        BlocProvider(create: (_) => AuthBloc(authService: AuthService())),
+     providers: [
+         BlocProvider<AuthBloc>(
+          create: (context) => AuthBloc(authService:AuthService()),
+        ),
+            BlocProvider(create: (_) => ForgotPasswordBloc()),
+
       ],
+
       child: MaterialApp(
     
         debugShowCheckedModeBanner: false,
-        initialRoute: '/home',
+        initialRoute: '/loginpage',
         routes: {
           '/loginpage': (context) => LoginPage(),
-          '/signuppage': (context) => Signuppage(),
+         '/signuppage': (context) => Signuppage(),
           '/home': (context) => HomePage(),
           '/forget1': (context) => ForgotPasswordPage(),
           '/forget2': (context) => ResetPasswordPage(email: '',),
           '/forget3': (context) => VerificationPage(email: '',),
-          '/profileedit': (context) => ProfileEditPage(),
+          '/caseform': (context) => CaseFormPage(),
        //    '/volunteerform': (context) => VolunteerProfileFormPage(data: {},),
        //   '/volunteerdetail': (context) => VolunteerProfileDetailsPage(data: {},),
         },

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hello/core/color.dart';
-import 'package:hello/pages/VolunteerProfileDetailsPage.dart';
-import 'package:hello/pages/about_page.dart';
-import 'package:hello/pages/home_page.dart';
-import 'package:hello/pages/profilePage.dart';
+import 'package:hello/ui/view/VolunteerProfileDetailsPage.dart';
+import 'package:hello/ui/view/about_page.dart';
+import 'package:hello/ui/view/home_page.dart';
+import 'package:hello/ui/view/profilePage.dart';
 
 
 class BottomNavBar extends StatelessWidget {

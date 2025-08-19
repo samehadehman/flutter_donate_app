@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hello/core/color.dart';
 import 'package:hello/main.dart';
 import 'package:hello/models/tasks.dart';
-import 'package:hello/pages/volunteer_profile_form_page.dart';
+import 'package:hello/ui/view/volunteer_profile_form_page.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class DetailsAssociationcamps extends StatelessWidget {
@@ -44,7 +44,7 @@ class DetailsAssociationcamps extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
                         image: const DecorationImage(
-                          image: AssetImage('lib/images/slider1.jpg'),
+                          image: AssetImage('assets/images/slider1.jpg'),
                           fit: BoxFit.cover,
                         ),
                         boxShadow: const [
@@ -187,7 +187,7 @@ class DetailsAssociationcamps extends StatelessWidget {
       ),
     ),
   ],
-), // ← هون أضفنا الفاصلة والمغلاق الصحيح
+), 
 trailing: Container(
 
                
@@ -244,7 +244,7 @@ trailing: Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(12),
                             image: const DecorationImage(
-                              image: AssetImage('lib/images/slider1.jpg'),
+                              image: AssetImage('assets/images/slider1.jpg'),
                               fit: BoxFit.cover,
                             ),
                             boxShadow: const [
@@ -281,7 +281,7 @@ trailing: Container(
                             height: 30,
                             width: 1,
                             onPressed: () {
-                              // هنا تضع وظيفة تفاصيل الشريك لو في صفحة خاصة
+
                             },
                           ),
                         ),
@@ -365,7 +365,6 @@ trailing: Container(
 
       SizedBox(height: 8),
 
-      // سطر التواريخ
       const Row(
         mainAxisAlignment: MainAxisAlignment.end,
         children: [

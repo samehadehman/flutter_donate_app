@@ -315,7 +315,6 @@ class _VolunteerProfileFormPageState extends State<VolunteerProfileFormPage> {
   }
 
   void _submit() {
-    // هنا نرجع البيانات للصفحة اللي نادت الفورم
     Navigator.pop(context, {
       'skills': skillsController.text,
       'availability': selectedAvailability ?? '',
@@ -400,7 +399,7 @@ class _VolunteerProfileFormPageState extends State<VolunteerProfileFormPage> {
                       CircleAvatar(
                         radius: 56,
                         backgroundColor: Colors.white,
-                        backgroundImage: AssetImage('lib/images/logo.png'),
+                        backgroundImage: AssetImage('assets/images/logo.png'),
                       ),
                       SizedBox(height: 30),
                       buildTextField("المهارات", skillsController, Icons.star),
@@ -427,13 +426,13 @@ class _VolunteerProfileFormPageState extends State<VolunteerProfileFormPage> {
                           ),
                         ),
                         icon: Icon(Icons.check_circle),
-                        label: Text("تأكيد المعلومات", style: TextStyle(fontWeight: FontWeight.bold)),
+                        label: Text("تأكيد المعلومات", style: TextStyle(fontWeight: FontWeight.bold ,  fontFamily: 'Zain',)),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             final confirmed = await showDialog<bool>(
                               context: context,
                               builder: (context) => AlertDialog(
-                                backgroundColor: Color(0xFFDFF6E1), // لون فاتح للـ dialog
+                                backgroundColor: Color(0xFFDFF6E1), 
                                 content: Text(
                                   'هل أنت متأكد من معلوماتك؟',
                                   textAlign: TextAlign.center,

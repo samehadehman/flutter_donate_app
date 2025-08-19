@@ -53,7 +53,7 @@ class GlobalDonationFab extends StatelessWidget {
               Center(
                 child: Text(
                   "تبرع سريع",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: zeti),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: zeti ,  fontFamily: 'Zain',),
                 ),
               ),
               SizedBox(height: 12),
@@ -61,7 +61,7 @@ class GlobalDonationFab extends StatelessWidget {
                Center(
                 child: Text(
                   "سيذهب تبرعك تلقائيًا لأحد الحالات الطارئة",
-                  style: TextStyle(fontSize: 14, color: medium_Green, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 14, color: medium_Green, fontWeight: FontWeight.bold ,  fontFamily: 'Zain',),
                   textAlign: TextAlign.center,
                 ),
               ),
@@ -85,7 +85,7 @@ class GlobalDonationFab extends StatelessWidget {
                   ),
                 ),
                 cursorColor: dark_Green,
-                style: TextStyle(color: dark_Green),
+                style: TextStyle(color: dark_Green ,  fontFamily: 'Zain',),
               ),
               SizedBox(height: 12),
               TextFormField(
@@ -107,7 +107,7 @@ class GlobalDonationFab extends StatelessWidget {
                   ),
                 ),
                 cursorColor: dark_Green,
-                style: TextStyle(color: dark_Green),
+                style: TextStyle(color: dark_Green ,  fontFamily: 'Zain',),
               ),
              
               SizedBox(height: 16),
@@ -116,7 +116,7 @@ class GlobalDonationFab extends StatelessWidget {
                   if (amountController.text.isEmpty || walletPasswordController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content: Text("يرجى تعبئة المبلغ وكلمة سر المحفظة"),backgroundColor:  Color.fromARGB(255, 247, 119, 134),
+                        content: Text("يرجى تعبئة المبلغ وكلمة سر المحفظة" , style: TextStyle( fontFamily: 'Zain',),),backgroundColor:  Color.fromARGB(255, 247, 119, 134),
                       ),
                     );
                     return;
@@ -124,11 +124,11 @@ class GlobalDonationFab extends StatelessWidget {
                   Navigator.pop(context);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text("تم التبرع بمبلغ ${amountController.text} ", ),backgroundColor:  Color.fromARGB(255, 247, 119, 134),
+                      content: Text("تم التبرع بمبلغ ${amountController.text} ", style: TextStyle( fontFamily: 'Zain',),),backgroundColor:  Color.fromARGB(255, 247, 119, 134),
                     ),
                   );
                 },
-                child: Text("تم", style: TextStyle(fontSize: 16)),
+                child: Text("تم", style: TextStyle(fontSize: 16 ,  fontFamily: 'Zain',)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: medium_Green,
                   foregroundColor: Colors.white,
@@ -149,7 +149,7 @@ class GlobalDonationFab extends StatelessWidget {
                     children: [
                       Icon(Icons.volunteer_activism, color: Colors.white),
                       SizedBox(width: 8),
-                      Text("التبرع السريع", style: TextStyle(color: Colors.white, fontSize: 18)),
+                      Text("التبرع السريع", style: TextStyle(color: Colors.white, fontSize: 18 ,  fontFamily: 'Zain',)),
                     ],
                   )
                 : Icon(Icons.volunteer_activism, color: Colors.white),

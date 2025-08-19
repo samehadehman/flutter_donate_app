@@ -145,7 +145,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                           backgroundColor: white,
                           backgroundImage: imagePath != null
                               ? FileImage(File(imagePath!))
-                              : AssetImage('lib/images/slider1.jpg') as ImageProvider,
+                              : AssetImage('assets/images/slider1.jpg') as ImageProvider,
                         ),
                         Positioned(
                           bottom: 0,
@@ -200,7 +200,7 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
                       ),
                       icon: Icon(Icons.save),
                       label: Text("حفظ المعلومات",
-                          style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: TextStyle(fontWeight: FontWeight.bold ,  fontFamily: 'Zain',)),
                       onPressed: () async {
                         await saveProfile();
                         Navigator.pop(context);
@@ -243,6 +243,11 @@ class _ProfileEditPageState extends State<ProfileEditPage> {
 
   Widget buildDropdown(String label, List<String> items, String? selectedValue,
       IconData icon, Function(String?) onChanged) {
+        
+         if (selectedValue != null && !items.contains(selectedValue)) {
+    selectedValue = null;
+  }
+
     return DropdownButtonFormField<String>(
       value: selectedValue,
       onChanged: onChanged,

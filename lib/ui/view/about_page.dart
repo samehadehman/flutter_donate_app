@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hello/core/color.dart';
-import 'package:hello/pages/VolunteerProfileDetailsPage.dart';
-import 'package:hello/pages/home_page.dart';
-import 'package:hello/pages/profilePage.dart';
+import 'package:hello/ui/view/VolunteerProfileDetailsPage.dart';
+import 'package:hello/ui/view/home_page.dart';
+import 'package:hello/ui/view/profilePage.dart';
 import 'package:hello/widgets/NavBar.dart';
+
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -32,7 +33,7 @@ class AboutPage extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Image.asset(
-                'lib/images/logo2.png',
+                'assets/images/logo2.png',
                 height: 60,
                 width: 60,
               ),
@@ -205,6 +206,7 @@ class AboutPage extends StatelessWidget {
                         color: zeti,
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
+                         fontFamily: 'Zain',
                       ),
                       textAlign: TextAlign.right,
                     ),
@@ -214,6 +216,7 @@ class AboutPage extends StatelessWidget {
                       style: TextStyle(
                         color: zeti,
                         fontSize: 13,
+                         fontFamily: 'Zain',
                       ),
                       textAlign: TextAlign.right,
                     ),
@@ -241,6 +244,7 @@ class AboutPage extends StatelessWidget {
             color: dark_Green,
             fontWeight: FontWeight.bold,
             fontSize: 18,
+             fontFamily: 'Zain',
           ),
         ),
         content: Text(
@@ -249,6 +253,7 @@ class AboutPage extends StatelessWidget {
           style: TextStyle(
             color: Colors.black87,
             fontSize: 15,
+             fontFamily: 'Zain',
           ),
         ),
         actions: [
@@ -259,6 +264,7 @@ class AboutPage extends StatelessWidget {
               style: TextStyle(
                 color: medium_Green,
                 fontWeight: FontWeight.bold,
+                 fontFamily: 'Zain',
               ),
             ),
           ),

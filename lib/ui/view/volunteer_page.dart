@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:hello/core/color.dart';
-import 'package:hello/pages/home_page.dart';
-import 'package:hello/pages/volunteerCompaign_detail_oage.dart';
+import 'package:hello/ui/view/home_page.dart';
+import 'package:hello/ui/view/volunteerCompaign_detail_oage.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class VolunteerCampaignsPage extends StatelessWidget {
@@ -29,7 +29,7 @@ final List<Map<String, dynamic>> scheduledCampaigns = [
 
   final List<Map<String, dynamic>> campaigns = [
     {
-      'image': 'lib/images/slider1.jpg',
+      'image': 'assets/images/slider1.jpg',
       'title': 'حملة نظافة الشاطئ',
       'status': 'نشطة',
       'category': 'بيئي',
@@ -86,10 +86,9 @@ final List<Map<String, dynamic>> scheduledCampaigns = [
                 ),
               ),
               alignment: Alignment.center,
-              child: Image.asset('lib/images/logo2.png', height: 60, width: 60),
+              child: Image.asset('assets/images/logo2.png', height: 60, width: 60),
             ),
 
-            // ✅ الزر في الأعلى اليمين
             Positioned(
               top: 20,
               right: 16,
@@ -111,7 +110,6 @@ final List<Map<String, dynamic>> scheduledCampaigns = [
               ),
             ),
 
-            // ✅ النص في الأعلى اليسار
             Positioned(
               top: 20,
               left: 16,
@@ -143,7 +141,6 @@ final List<Map<String, dynamic>> scheduledCampaigns = [
               padding: const EdgeInsets.only(top: 150),
               child: Stack(
                 children: [
-                  // ✅ الخلفية السفلية مع Border علوي واضح
                   Container(
                     decoration: BoxDecoration(
                       color: const Color(0XFFF2F4EC),
@@ -155,7 +152,6 @@ final List<Map<String, dynamic>> scheduledCampaigns = [
                   ),
                   Column(
                     children: [
-                      // ✅ TabBar مستقل فوق القوائم
                       Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: TabBar(
@@ -169,7 +165,6 @@ final List<Map<String, dynamic>> scheduledCampaigns = [
                         ),
                       ),
 
-                      // ✅ القوائم تحت التاب بار
                       Expanded(
                         child: TabBarView(
                           children: [
@@ -286,7 +281,6 @@ Widget buildScheduledList(
   BuildContext context,
   List<Map<String, dynamic>> campaigns,
 ) {
-  // بيانات وهمية للعرض
   final List<Map<String, dynamic>> fakeTasks = [
     {
       'title': 'حملة تنظيف الشاطئ',
@@ -330,17 +324,19 @@ Widget buildScheduledList(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                       color: zeti,
+                       fontFamily: 'Zain',
                     ),
                   ),
                   SizedBox(height: 8),
                   Text(
-                                           textDirection: TextDirection.rtl,
+             textDirection: TextDirection.rtl,
 
                   
                     'المهمة: ${task['taskName'] ?? ''}',
                     style: TextStyle(
                       fontSize: 16,
                       color: medium_Green,
+                       fontFamily: 'Zain',
                     ),
                   ),
                   SizedBox(height: 8),
@@ -351,11 +347,11 @@ Widget buildScheduledList(
                     style: TextStyle(
                       fontSize: 14,
                       color:  Color.fromARGB(255, 247, 119, 134),
+                       fontFamily: 'Zain',
                     ),
                   ),
                   SizedBox(height: 16),
 
-                  // Dropdown لتغيير الحالة بين مقبولة و انسحاب
                   DropdownButton<String>(
                     value: currentStatus,
                     items: ['مقبولة', 'انسحاب'].map((status) {
@@ -365,6 +361,7 @@ Widget buildScheduledList(
                           status,
                           style: TextStyle(
                             color: status == 'انسحاب' ?  Color.fromARGB(255, 247, 119, 134) : dark_Green,
+                             fontFamily: 'Zain',
                           ),
                         ),
                       );

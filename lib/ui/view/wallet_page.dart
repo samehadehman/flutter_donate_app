@@ -23,11 +23,10 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      // هنا يمكنك تنفيذ حفظ البيانات أو أي عملية أخرى
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('تم إنشاء المحفظة بنجاح!') , backgroundColor:  Color.fromARGB(255, 247, 119, 134),),
       );
-      Navigator.pop(context , true); // ترجع لصفحة البروفايل
+      Navigator.pop(context , true); 
     }
   }
 
@@ -60,7 +59,6 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
               ),
             ),
 
-            // ✅ الزر في الأعلى اليمين
             Positioned(
               top: 20,
               right: 16,
@@ -80,7 +78,6 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
               ),
             ),
 
-            // ✅ النص في الأعلى اليسار
             Positioned(
               top: 20,
               left: 16,
@@ -135,7 +132,7 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
             children: [
              Text(
               '! يرجى إدخال المبلغ',
-                  style: TextStyle(fontSize: 18, color: zeti, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, color: zeti, fontWeight: FontWeight.bold ,  fontFamily: 'Zain',),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 30,),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hello/core/color.dart';
-import 'package:hello/pages/VolunteerProfileDetailsPage.dart';
-import 'package:hello/pages/about_page.dart';
-import 'package:hello/pages/home_page.dart';
-import 'package:hello/pages/profileEditPage.dart';
-import 'package:hello/pages/wallet_page.dart';
+import 'package:hello/ui/view/VolunteerProfileDetailsPage.dart';
+import 'package:hello/ui/view/about_page.dart';
+import 'package:hello/ui/view/home_page.dart';
+import 'package:hello/ui/view/profileEditPage.dart';
+import 'package:hello/ui/view/wallet_page.dart';
 import 'package:hello/widgets/NavBar.dart';
-import 'package:hello/pages/volunteer_profile_form_page.dart';
+import 'package:hello/ui/view/volunteer_profile_form_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -146,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             radius: 55,
                             backgroundColor: white,
                             backgroundImage: AssetImage(
-                              'lib/images/slider1.jpg',
+                              'assets/images/slider1.jpg',
                             ),
                           ),
                           Text(
@@ -155,6 +155,7 @@ class _ProfilePageState extends State<ProfilePage> {
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                               color: zeti,
+                               fontFamily: 'Zain',
                             ),
                           ),
                           SizedBox(height: 6),
@@ -166,6 +167,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: medium_Green,
+                                   fontFamily: 'Zain',
                                 ),
                               ),
                               Text(
@@ -174,6 +176,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   fontSize: 16,
                                   color: Color.fromARGB(255, 247, 119, 134),
                                   fontWeight: FontWeight.bold,
+                                   fontFamily: 'Zain',
                                 ),
                               ),
                             ],
@@ -278,13 +281,14 @@ Widget buildWalletTab(
               fontSize: 18,
               color: Colors.black87,
               fontWeight: FontWeight.bold,
+               fontFamily: 'Zain',
             ),
           ),
           SizedBox(height: 8),
           Text(
             'اضغط أدناه لإنشاء محفظة إلكترونية واكتشف مزاياها',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black54, fontSize: 14),
+            style: TextStyle(color: Colors.black54, fontSize: 14 ,  fontFamily: 'Zain',),
           ),
           SizedBox(height: 20),
           ElevatedButton.icon(
@@ -354,6 +358,7 @@ Widget buildWalletTab(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                       letterSpacing: 1.5,
+                       fontFamily: 'Zain',
                     ),
                   ),
                 ],
@@ -369,6 +374,7 @@ Widget buildWalletTab(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                   letterSpacing: 1.2,
+                   fontFamily: 'Zain',
                 ),
               ),
               SizedBox(height: 38),
@@ -378,11 +384,11 @@ Widget buildWalletTab(
                 children: [
                   Text(
                     'تاريخ الإنشاء',
-                    style: TextStyle(color: Colors.white54, fontSize: 12),
+                    style: TextStyle(color: Colors.white54, fontSize: 12 ,  fontFamily: 'Zain',),
                   ),
                   Text(
                     walletData['createdAt'] ?? 'غير معروف',
-                    style: TextStyle(color: Colors.white, fontSize: 14),
+                    style: TextStyle(color: Colors.white, fontSize: 14 ,  fontFamily: 'Zain',),
                   ),
                 ],
               ),
@@ -420,7 +426,7 @@ Widget buildVolunteerTab(
           const Text(
             'ليس لديك ملف تطوع بعد، بادر بإنشاء ملفك الآن',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black54, fontSize: 16),
+            style: TextStyle(color: Colors.black54, fontSize: 16 ,  fontFamily: 'Zain',),
           ),
           const SizedBox(height: 12),
           IconButton(
@@ -522,6 +528,7 @@ Widget buildVolunteerTab(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black87,
+                                     fontFamily: 'Zain',
                                   ),
                                 ),
                               ),
@@ -534,6 +541,7 @@ Widget buildVolunteerTab(
                             style: const TextStyle(
                               fontSize: 14,
                               color: Colors.black54,
+                               fontFamily: 'Zain',
                             ),
                           ),
                         ],
@@ -596,9 +604,9 @@ Widget buildInfoCard(IconData icon, String title, String value) {
       leading: Icon(icon, color: medium_Green),
       title: Text(
         title,
-        style: TextStyle(fontWeight: FontWeight.bold, color: zeti),
+        style: TextStyle(fontWeight: FontWeight.bold, color: zeti ,  fontFamily: 'Zain',),
       ),
-      subtitle: Text(value, style: TextStyle(color: zeti)),
+      subtitle: Text(value, style: TextStyle(color: zeti ,  fontFamily: 'Zain',)),
     ),
   );
 }
@@ -613,6 +621,7 @@ Widget buildEmptyMessage(String message) {
           fontSize: 16,
           color: Colors.black54,
           height: 1.6,
+           fontFamily: 'Zain',
         ),
         textAlign: TextAlign.center,
       ),
@@ -661,6 +670,7 @@ Widget buildAchievementsTab(BuildContext context) {
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                         color: zeti,
+                         fontFamily: 'Zain',
                       ),
                     ),
                     SizedBox(height: 8),
@@ -674,6 +684,7 @@ Widget buildAchievementsTab(BuildContext context) {
                               style: TextStyle(
                                 color: Color.fromARGB(255, 247, 119, 134),
                                 fontWeight: FontWeight.bold,
+                                 fontFamily: 'Zain',
                               ),
                             ),
                             Text('الحملات'),
@@ -686,6 +697,7 @@ Widget buildAchievementsTab(BuildContext context) {
                               style: TextStyle(
                                 color: Color.fromARGB(255, 247, 119, 134),
                                 fontWeight: FontWeight.bold,
+                                 fontFamily: 'Zain',
                               ),
                             ),
                             Text('ساعات التطوع'),
@@ -698,6 +710,7 @@ Widget buildAchievementsTab(BuildContext context) {
                               style: TextStyle(
                                 color: Color.fromARGB(255, 247, 119, 134),
                                 fontWeight: FontWeight.bold,
+                                 fontFamily: 'Zain',
                               ),
                             ),
                             Text('التبرعات'),
@@ -757,7 +770,7 @@ Widget buildAchievementsTab(BuildContext context) {
                           subtitle: Text('التاريخ: ${achievement['date']}'),
                           trailing: Text(
                             achievement['type']!,
-                            style: TextStyle(color: zeti),
+                            style: TextStyle(color: zeti ,  fontFamily: 'Zain',),
                           ),
                         ),
                       );
