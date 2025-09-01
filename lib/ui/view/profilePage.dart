@@ -423,6 +423,8 @@ Widget buildWalletTab(
     ),
   ),
 );
+         context.read<WalletBloc>().add(FetchWallet());
+
                   },
                 ),
               ],

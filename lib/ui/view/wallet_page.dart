@@ -276,8 +276,11 @@ widget.isEdit
                   return null;
                 },
               ),
-              SizedBox(height: 30),]
-              else
+              SizedBox(height: 30),
+              
+              ],
+
+              
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButtonWidget(
