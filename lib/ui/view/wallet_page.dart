@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hello/blocs/wallet/wallet_bloc.dart';
+import 'package:hello/blocs/wallet/wallet_event.dart';
 import 'package:hello/core/color.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
@@ -21,12 +24,15 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
     super.dispose();
   }
 
-  void _submit() {
+ void _submit() {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('تم إنشاء المحفظة بنجاح!') , backgroundColor:  Color.fromARGB(255, 247, 119, 134),),
-      );
-      Navigator.pop(context , true); 
+      // إرسال حدث للـ Bloc لإنشاء المحفظة
+      final amount = double.parse(amountController.text);
+      final password = passwordController.text;
+      final confirmPassword = confirmPasswordController.text;
+
+      context.read<WalletBloc>().add(CreateWallet(amount: amount, password: password ,         confirmPassword: confirmPassword,
+));
     }
   }
 
@@ -35,6 +41,23 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
     return Scaffold(
 
       body: 
+      BlocListener<WalletBloc, WalletState>(
+        listener: (context, state) {
+          if (state is WalletLoaded) {
+            // بعد ما ينشأ المحفظة، يرجع للتاب تلقائي
+           context.read<WalletBloc>().add(FetchWallet()); // تحدث البيانات
+
+            Navigator.pop(context);
+
+          } else if (state is WalletError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        },child: 
       Stack(
           children: [
             Container(
@@ -53,7 +76,7 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
               ),
               alignment: Alignment.center,
               child: Image.asset(
-                'lib/images/logo2.png',
+                'assets/images/logo2.png',
                 height: 60,
                 width: 60,
               ),
@@ -113,7 +136,7 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                     ),
                   ],
            border: Border(
-  top: BorderSide(color: dark_Green, width: 2),
+  top: BorderSide(color: zeti, width: 2),
 ),
 
                   borderRadius: BorderRadius.only(
@@ -141,21 +164,21 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                 keyboardType: TextInputType.number,
                decoration: InputDecoration(
         labelText: 'المبلغ',
-        labelStyle: TextStyle(color: dark_Green),
-        prefixIcon: Icon(Icons.attach_money, color: dark_Green),
+        labelStyle: TextStyle(color: zeti),
+        prefixIcon: Icon(Icons.attach_money, color: zeti),
         filled: true,
         fillColor: Light_Green.withOpacity(0.3),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: dark_Green, width: 1.5),
+          borderSide: BorderSide(color: zeti, width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: babygreen.withOpacity(0.3)),
         ),
       ),
-      cursorColor: dark_Green,
-      style: TextStyle(color: dark_Green),
+      cursorColor: zeti,
+      style: TextStyle(color: zeti),
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'يرجى إدخال المبلغ';
                   if (double.tryParse(value) == null) return 'يرجى إدخال رقم صحيح';
@@ -168,21 +191,21 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                 obscureText: true,
                 decoration: InputDecoration(
         labelText: 'كلمة المرور',
-        labelStyle: TextStyle(color: dark_Green),
-        prefixIcon: Icon(Icons.password_rounded, color: dark_Green),
+        labelStyle: TextStyle(color: zeti),
+        prefixIcon: Icon(Icons.password_rounded, color: zeti),
         filled: true,
         fillColor: Light_Green.withOpacity(0.3),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: dark_Green, width: 1.5),
+          borderSide: BorderSide(color: zeti, width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: babygreen.withOpacity(0.3)),
         ),
       ),
-      cursorColor: dark_Green,
-      style: TextStyle(color: dark_Green),
+      cursorColor: zeti,
+      style: TextStyle(color: zeti),
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'يرجى إدخال كلمة المرور';
                   if (value.length < 6) return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
@@ -195,21 +218,21 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                 obscureText: true,
                 decoration: InputDecoration(
         labelText: 'تأكيد كلمة المرور',
-        labelStyle: TextStyle(color: dark_Green),
-        prefixIcon: Icon(Icons.password, color: dark_Green),
+        labelStyle: TextStyle(color: zeti),
+        prefixIcon: Icon(Icons.password, color: zeti),
         filled: true,
         fillColor: Light_Green.withOpacity(0.3),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide(color: dark_Green, width: 1.5),
+          borderSide: BorderSide(color: zeti, width: 1.5),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(15),
           borderSide: BorderSide(color: babygreen.withOpacity(0.3)),
         ),
       ),
-      cursorColor: dark_Green,
-      style: TextStyle(color: dark_Green),
+      cursorColor: zeti,
+      style: TextStyle(color: zeti),
                 validator: (value) {
                   if (value == null || value.isEmpty) return 'يرجى تأكيد كلمة المرور';
                   if (value != passwordController.text) return 'كلمات المرور غير متطابقة';
@@ -223,16 +246,21 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                   textElevated: 'إنشاء ',
                               height: 40,
                               width: 30,
-                  onPressed:(){ _submit();
-                  },
+                  onPressed: _submit,
+                
                  
                 ),
+              
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
-              ))])
     );
   }
 }

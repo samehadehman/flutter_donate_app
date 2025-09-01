@@ -95,7 +95,7 @@ class AboutPage extends StatelessWidget {
                     ),
                   ],
            border: Border(
-  top: BorderSide(color: dark_Green, width: 2),
+  top: BorderSide(color: zeti, width: 2),
 ),
 
                   borderRadius: BorderRadius.only(
@@ -193,7 +193,7 @@ class AboutPage extends StatelessWidget {
               CircleAvatar(
                 radius: 25,
                 backgroundColor: medium_Green.withOpacity(0.1),
-                child: Icon(icon, color: dark_Green, size: 28),
+                child: Icon(icon, color: zeti, size: 28),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -223,7 +223,7 @@ class AboutPage extends StatelessWidget {
                   ],
                 ),
               ),
-               Icon(Icons.arrow_forward_ios, size: 16, color: dark_Green),
+               Icon(Icons.arrow_forward_ios, size: 16, color: zeti),
             ],
           ),
         ),
@@ -241,7 +241,7 @@ class AboutPage extends StatelessWidget {
           title,
           textAlign: TextAlign.right,
           style: TextStyle(
-            color: dark_Green,
+            color: zeti,
             fontWeight: FontWeight.bold,
             fontSize: 18,
              fontFamily: 'Zain',

@@ -14,7 +14,7 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
     return 
      Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: dark_Green,
+        backgroundColor: zeti,
         child: Icon(Icons.edit , color: white,),
         
         
@@ -122,7 +122,7 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
                     buildInfoCard(
                       icon: Icons.access_time,
                       title: 'أوقات التفرغ',
-                      value: data['availability'] ?? 'لم تتم الإضافة بعد',
+                      value: data['availability_type_id']?['availability_type'] ?? 'لم تتم الإضافة بعد',
                     ),
             
                      
@@ -130,25 +130,25 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
                     buildInfoCard(
                       icon: Icons.access_time,
                       title: 'عدد الساعات المتاحة',
-                      value: data['hours'] ?? 'لم تتم الإضافة بعد',
+  value: data['availability_hours']?.toString() ?? 'لم تتم الإضافة بعد',
                     ),
                     const SizedBox(height: 12),
                     buildInfoCard(
                       icon: Icons.favorite,
                       title: 'الأعمال المفضلة',
-                      value: data['interests'] ?? 'لم تتم الإضافة بعد',
+  value: data['preferred_tasks'] ?? 'لم تتم الإضافة بعد',
                     ),
                     const SizedBox(height: 12),
                     buildInfoCard(
                       icon: Icons.school,
                       title: 'التخصص الأكاديمي',
-                      value: data['major'] ?? 'لم تتم الإضافة بعد',
+  value: data['academic_major'] ?? 'لم تتم الإضافة بعد',
                     ),
                     const SizedBox(height: 12),
                     buildInfoCard(
                       icon: Icons.history,
                       title: 'أعمال تطوعية سابقة',
-                      value: data['pastVolunteer'] ?? 'لم تتم الإضافة بعد',
+  value: data['previous_volunteer_work'] ?? 'لم تتم الإضافة بعد',
                     ),
                     const SizedBox(height: 20),
                   ],

@@ -44,6 +44,7 @@ final class AuthSuccess extends AuthState {
 
 final class AuthFailure extends AuthState {
   final String error;
+  
 
   const AuthFailure(this.error);
 }

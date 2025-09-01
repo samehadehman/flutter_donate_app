@@ -1,198 +1,343 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hello/blocs/voluntingCamp/scheduledTasks_bloc.dart';
+import 'package:hello/blocs/voluntingCamp/scheduledTasks_state.dart';
+import 'package:hello/blocs/voluntingCamp/voluntCamp_bloc.dart';
+import 'package:hello/blocs/voluntingCamp/voluntCamp_event.dart';
+import 'package:hello/blocs/voluntingCamp/voluntCamp_state.dart';
 import 'package:hello/core/color.dart';
+import 'package:hello/models/voluntingCampaigns_model.dart';
+import 'package:hello/services/voluntingCampaigns_service.dart';
 import 'package:hello/ui/view/home_page.dart';
 import 'package:hello/ui/view/volunteerCompaign_detail_oage.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class VolunteerCampaignsPage extends StatelessWidget {
-final List<Map<String, dynamic>> scheduledCampaigns = [
-  {
-    'title': 'حملة نظافة الشاطئ',
-    'taskName': 'جمع النفايات',
-    'status': 'مقبولة',
-    'startDate': '2025-08-01',
-    'startTime': '08:00',
-    'endDate': '2025-08-05',
-  },
-  {
-    'title': 'حملة زراعة الأشجار',
-    'taskName': 'زرع الأشجار في الحديقة',
-    'status': 'مقبولة',
-    'startDate': '2025-08-10',
-    'startTime': '09:00',
-    'endDate': '2025-08-15',
-  },
-];
 
+  VolunteerCampaignsPage({super.key,});
 
-  final List<Map<String, dynamic>> campaigns = [
-    {
-      'image': 'assets/images/slider1.jpg',
-      'title': 'حملة نظافة الشاطئ',
-      'status': 'نشطة',
-      'category': 'بيئي',
-      'tasksCount': '3',
-      'description': 'تنظيف الشاطئ من النفايات البلاستيكية',
-      'startDate': '2025-08-01',
-      'endDate': '2025-08-05',
-      'location': 'طرطوس - شاطئ القرم',
-      'startTime': '08:00',
-      'endTime': '12:00',
-      'tasks': [
-        {
-          'name': 'جمع النفايات',
-          'vacancies': 5,
-          'description': 'جمع النفايات البلاستيكية والعضوية',
-        },
-        {
-          'name': 'تنظيم المتطوعين',
-          'vacancies': 2,
-          'description': 'توزيع المهام على الفرق',
-        },
-      ],
-    },
-  ];
-  // final List<Map<String, dynamic>> scheduledCampaigns = [
-  //   // يمكنك نسخ بعض الحملات من allCampaigns وتعديل الحقول حسب الحاجة
-  //   {
-  //     'title': 'حملة نظافة الشاطئ',
-  //     'status': 'بانتظار القبول',
-  //     'startDate': '2025-08-01',
-  //     'startTime': '08:00',
-  //   },
-  // ];
-
-  @override
+ 
+@override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: DefaultTabController(
-        length: 2,
-        child: Stack(
-          children: [
-            Container(
-              height: 220,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Color(0XFF4B4D40),
-                    const Color.fromARGB(255, 115, 123, 114),
-                    const Color(0xFFb3beb0),
-                  ],
-                  begin: AlignmentDirectional.topStart,
-                  end: AlignmentDirectional.bottomEnd,
-                ),
-              ),
-              alignment: Alignment.center,
-              child: Image.asset('assets/images/logo2.png', height: 60, width: 60),
-            ),
-
-            Positioned(
-              top: 20,
-              right: 16,
-              child: Container(
-                width: 40,
-                height: 40,
+    return BlocProvider(
+      create: (context) =>
+          CampaignBloc(CampaignService())..add(FetchCampaigns()),
+      child: Scaffold(
+        body: DefaultTabController(
+          length: 2,
+          child: Stack(
+            children: [
+              // ✅ نفس الهيدر تبعك
+              Container(
+                height: 220,
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  color: const Color(0X80D9E4D7).withAlpha(85),
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(color: Color(0XFFF2F4EC)),
-                ),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Color(0XFFF2F4EC),
+                  gradient: LinearGradient(
+                    colors: [
+                      Color(0XFF4B4D40),
+                      const Color.fromARGB(255, 115, 123, 114),
+                      const Color(0xFFb3beb0),
+                    ],
+                    begin: AlignmentDirectional.topStart,
+                    end: AlignmentDirectional.bottomEnd,
                   ),
-                  onPressed: () => Navigator.pop(context),
                 ),
-              ),
-            ),
-
-            Positioned(
-              top: 20,
-              left: 16,
-              child: Container(
                 alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0X80D9E4D7).withAlpha(85),
-                  borderRadius: BorderRadius.circular(90),
-                  border: Border.all(color: const Color(0XFFF2F4EC)),
-                ),
-                child: const Text(
-                  ' قسم التطوع',
-                  style: TextStyle(
-                    fontSize: 20,
-                    color: Color(0XFFF2F4EC),
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'Zain',
+                child: Image.asset('assets/images/logo2.png',
+                    height: 60, width: 60),
+              ),
+
+              // زر رجوع
+              Positioned(
+                top: 20,
+                right: 16,
+                child: Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: const Color(0X80D9E4D7).withAlpha(85),
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(color: Color(0XFFF2F4EC)),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Color(0XFFF2F4EC),
+                    ),
+                    onPressed: () => Navigator.pop(context),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 10),
 
-            Padding(
-              padding: const EdgeInsets.only(top: 150),
-              child: Stack(
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0XFFF2F4EC),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(55),
-                        topRight: Radius.circular(55),
-                      ),
+              // عنوان
+              Positioned(
+                top: 20,
+                left: 16,
+                child: Container(
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0X80D9E4D7).withAlpha(85),
+                    borderRadius: BorderRadius.circular(90),
+                    border: Border.all(color: const Color(0XFFF2F4EC)),
+                  ),
+                  child: const Text(
+                    ' قسم التطوع',
+                    style: TextStyle(
+                      fontSize: 20,
+                      color: Color(0XFFF2F4EC),
+                      fontWeight: FontWeight.w600,
+                      fontFamily: 'Zain',
                     ),
                   ),
-                  Column(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: TabBar(
-                          indicatorColor: medium_Green,
-                          labelColor: zeti,
-                          unselectedLabelColor: Light_Green,
-                          tabs: [
-                            Tab(text: 'كل الحملات'),
-                            Tab(text: 'جدولة المهام'),
-                          ],
-                        ),
-                      ),
+                ),
+              ),
 
-                      Expanded(
-                        child: TabBarView(
-                          children: [
-                            buildCampaignsList(context, campaigns),
-                            buildScheduledList(context, scheduledCampaigns),
-                          ],
+              // ✅ جسم الصفحة
+              Padding(
+                padding: const EdgeInsets.only(top: 150),
+                child: Stack(
+                  children: [
+                    Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0XFFF2F4EC),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(55),
+                          topRight: Radius.circular(55),
                         ),
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(top: 16),
+                          child: TabBar(
+                            indicatorColor: medium_Green,
+                            labelColor: zeti,
+                            unselectedLabelColor: Light_Green,
+                            tabs: const [
+                              Tab(text: 'كل الحملات' ),
+                              Tab(text: 'جدولة المهام'),
+                            ],
+                          ),
+                        ),
+
+                        Expanded(
+                          child: TabBarView(
+                            children: [
+                              // ✅ BlocBuilder لمتابعة الحملات
+                              BlocBuilder<CampaignBloc, CampaignState>(
+                                builder: (context, state) {
+                                  if (state is CampaignLoading) {
+                                    return const Center(
+                                        child: CircularProgressIndicator());
+                                  } else if (state is CampaignLoaded) {
+                                    return buildCampaignsList(
+                                        context, state.campaigns);
+                                  } else if (state is CampaignError) {
+                                    return Center(
+                                        child: Text(
+                                      state.message,
+                                      style: const TextStyle(color: Colors.red , fontFamily: 'Zain'),
+                                    ));
+                                  }
+                                  return Container();
+                                },
+                              ),
+
+                              // ✅ جدولة المهام (ثابتة حالياً)
+ BlocBuilder<ScheduledTasksBloc, ScheduledTasksState>(
+                              builder: (context, state) {
+                                if (state is ScheduledTasksLoading) {
+                                  return const Center(child: CircularProgressIndicator());
+                                } else if (state is ScheduledTasksError) {
+                                  return Center(child: Text('حدث خطأ: ${state.message}'));
+                                } else if (state is ScheduledTasksLoaded) {
+                                  final tasks = state.tasks;
+                                  if (tasks.isEmpty) return Center(child: Text('لا توجد مهام مجدولة'));
+                                  return ListView.builder(
+                                    padding: const EdgeInsets.all(16),
+                                    itemCount: tasks.length,
+                                    itemBuilder: (context, index) {
+                                      final task = tasks[index];
+                                      String currentStatus = task.status;
+                                      return StatefulBuilder(
+                                        builder: (context, setState) {
+                                          return Card(
+                                            color: Colors.green[100],
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                            margin: const EdgeInsets.only(bottom: 15),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(16),
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: [
+                                                  Text(task.campaignName, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                                  SizedBox(height: 8),
+                                                  Text('المهمة: ${task.taskName}', textDirection: TextDirection.rtl),
+                                                  SizedBox(height: 8),
+                                                  Text('تاريخ الانتهاء: ${task.campaignEndTime}', textDirection: TextDirection.rtl),
+                                                  SizedBox(height: 8),
+                                                  DropdownButton<String>(
+                                                    value: currentStatus,
+                                                    items: ['مقبولة', 'انسحاب'].map((status) {
+                                                      return DropdownMenuItem<String>(
+                                                        value: status,
+                                                        child: Text(status),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged: (newStatus) {
+                                                      if (newStatus != null) {
+                                                        setState(() => currentStatus = newStatus);
+                                                      }
+                                                    },
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ],
+                        ),
+                      ),                            ],
+                       
+                      
+                    ),
+                  ],
+                ),
               ),
-            ),
-            ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(55),
-                topRight: Radius.circular(55),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
+
+// Widget buildScheduledList(
+//   BuildContext context,
+//   List<Map<String, dynamic>> campaigns,
+// ) {
+//   // final List<Map<String, dynamic>> fakeTasks = [
+//   //   {
+//   //     'title': 'حملة تنظيف الشاطئ',
+//   //     'taskName': 'جمع النفايات البلاستيكية',
+//   //     'status': 'مقبولة',
+//   //     'endDate': '2025-08-05',
+//   //   },
+//   //   {
+//   //     'title': 'حملة زراعة الأشجار',
+//   //     'taskName': 'زرع الأشجار في الحديقة العامة',
+//   //     'status': 'مقبولة',
+//   //     'endDate': '2025-08-10',
+//   //   },
+//   // ];
+
+//   return ListView.builder(
+//     padding: const EdgeInsets.all(30),
+//     itemCount: fakeTasks.length,
+//     itemBuilder: (context, index) {
+//       final task = fakeTasks[index];
+//       String currentStatus = task['status'] ?? 'مقبولة';
+
+//       return StatefulBuilder(
+//         builder: (context, setState) {
+//           return Card(
+//             color: babygreen,
+//             shape: RoundedRectangleBorder(
+//               borderRadius: BorderRadius.circular(20),
+//             ),
+//             elevation: 6,
+//             margin: const EdgeInsets.only(bottom: 15),
+//             child: Padding(
+//               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 22),
+//               child: Column(
+//                 crossAxisAlignment: CrossAxisAlignment.end,
+//                 children: [
+//                   Text(
+//                        textDirection: TextDirection.rtl,
+//                     task['title'] ?? '',
+//                     style: TextStyle(
+//                       fontSize: 20,
+//                       fontWeight: FontWeight.bold,
+//                       color: zeti,
+//                        fontFamily: 'Zain',
+//                     ),
+//                   ),
+//                   SizedBox(height: 8),
+//                   Text(
+//              textDirection: TextDirection.rtl,
+
+                  
+//                     'المهمة: ${task['taskName'] ?? ''}',
+//                     style: TextStyle(
+//                       fontSize: 16,
+//                       color: medium_Green,
+//                        fontFamily: 'Zain',
+//                     ),
+//                   ),
+//                   SizedBox(height: 8),
+//                   Text(
+//                                            textDirection: TextDirection.rtl,
+
+//                     'تاريخ الانتهاء: ${task['endDate'] ?? ''}',
+//                     style: TextStyle(
+//                       fontSize: 14,
+//                       color:  Color.fromARGB(255, 247, 119, 134),
+//                        fontFamily: 'Zain',
+//                     ),
+//                   ),
+//                   SizedBox(height: 16),
+
+//                   DropdownButton<String>(
+//                     value: currentStatus,
+//                     items: ['مقبولة', 'انسحاب'].map((status) {
+//                       return DropdownMenuItem<String>(
+//                         value: status,
+//                         child: Text(
+//                           status,
+//                           style: TextStyle(
+//                             color: status == 'انسحاب' ?  Color.fromARGB(255, 247, 119, 134) : zeti,
+//                              fontFamily: 'Zain',
+
+                      
+//                           ),
+//                         ),
+//                       );
+//                     }).toList(),
+//                     onChanged: (newStatus) {
+//                       if (newStatus != null) {
+//                         setState(() {
+//                           currentStatus = newStatus;
+//                         });
+//                       }
+//                     },
+//                   ),
+//                 ],
+//               ),
+//             ),
+//           );
+//         },
+//       );
+//     },
+//   );
+// }
+
   Widget buildCampaignsList(
     BuildContext context,
-    List<Map<String, dynamic>> campaigns,
+    List<CampaignModel> campaigns,
   ) {
     return Container(
       color: const Color(0XFFF2F4EC),
@@ -202,16 +347,18 @@ final List<Map<String, dynamic>> scheduledCampaigns = [
         itemBuilder: (context, index) {
           final c = campaigns[index];
           return buildVolunteerCampaignCard(
-            imageUrl: c['image'],
-            title: c['title'],
-            status: c['status'],
-            category: c['category'],
-            tasksCount: c['tasksCount'],
+            imageUrl: c.photo,
+            title: c.title,
+            status: c.statusType,
+            category: c.classificationName,
+            tasksCount: c.numberOfTasks.toString(),
             onTap: () {
+              int selectedCampaignId = c.id;
+
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailsAssociationcamps(),
+                  builder: (context) => DetailsAssociationcamps(campaignId: selectedCampaignId,),
                 ),
               );
             },
@@ -220,170 +367,6 @@ final List<Map<String, dynamic>> scheduledCampaigns = [
       ),
     );
   }
-// Widget buildScheduledList(
-//   BuildContext context,
-//   List<Map<String, dynamic>> campaigns,
-// ) {
-//   final acceptedCampaigns = campaigns.where((c) => c['status'] == 'مقبولة').toList();
-
-//   acceptedCampaigns.sort((a, b) {
-//     final aDate = DateTime.parse('${a['startDate']} ${a['startTime']}');
-//     final bDate = DateTime.parse('${b['startDate']} ${b['startTime']}');
-//     return aDate.compareTo(bDate);
-//   });
-
-//   return ListView.builder(
-//     padding: const EdgeInsets.all(20),
-//     itemCount: acceptedCampaigns.length,
-//     itemBuilder: (context, index) {
-//       final campaign = acceptedCampaigns[index];
-
-//       String currentStatus = campaign['status'] ?? 'مقبولة';
-
-//       return StatefulBuilder(
-//         builder: (context, setState) {
-//           return Card(
-//             margin: const EdgeInsets.only(bottom: 16),
-//             child: ListTile(
-//               title: Text(campaign['title'] ?? ''),
-//               subtitle: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.start,
-//                 children: [
-//                   Text('المهمة: ${campaign['taskName'] ?? ''}'),
-//                   Text('تاريخ الانتهاء: ${campaign['endDate'] ?? ''}'),
-//                 ],
-//               ),
-//               trailing: DropdownButton<String>(
-//                 value: currentStatus,
-//                 items: <String>['مقبولة', 'تم الاعتذار'].map((String value) {
-//                   return DropdownMenuItem<String>(
-//                     value: value,
-//                     child: Text(value),
-//                   );
-//                 }).toList(),
-//                 onChanged: (String? newStatus) {
-//                   if (newStatus != null) {
-//                     setState(() {
-//                       currentStatus = newStatus;
-//                       campaign['status'] = newStatus; // لتحديث الحالة في القائمة
-//                     });
-//                   }
-//                 },
-//               ),
-//             ),
-//           );
-//         },
-//       );
-//     },
-//   );
-// }
-Widget buildScheduledList(
-  BuildContext context,
-  List<Map<String, dynamic>> campaigns,
-) {
-  final List<Map<String, dynamic>> fakeTasks = [
-    {
-      'title': 'حملة تنظيف الشاطئ',
-      'taskName': 'جمع النفايات البلاستيكية',
-      'status': 'مقبولة',
-      'endDate': '2025-08-05',
-    },
-    {
-      'title': 'حملة زراعة الأشجار',
-      'taskName': 'زرع الأشجار في الحديقة العامة',
-      'status': 'مقبولة',
-      'endDate': '2025-08-10',
-    },
-  ];
-
-  return ListView.builder(
-    padding: const EdgeInsets.all(30),
-    itemCount: fakeTasks.length,
-    itemBuilder: (context, index) {
-      final task = fakeTasks[index];
-      String currentStatus = task['status'] ?? 'مقبولة';
-
-      return StatefulBuilder(
-        builder: (context, setState) {
-          return Card(
-            color: babygreen,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            elevation: 6,
-            margin: const EdgeInsets.only(bottom: 15),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 22),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                       textDirection: TextDirection.rtl,
-                    task['title'] ?? '',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: zeti,
-                       fontFamily: 'Zain',
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-             textDirection: TextDirection.rtl,
-
-                  
-                    'المهمة: ${task['taskName'] ?? ''}',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: medium_Green,
-                       fontFamily: 'Zain',
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                                           textDirection: TextDirection.rtl,
-
-                    'تاريخ الانتهاء: ${task['endDate'] ?? ''}',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color:  Color.fromARGB(255, 247, 119, 134),
-                       fontFamily: 'Zain',
-                    ),
-                  ),
-                  SizedBox(height: 16),
-
-                  DropdownButton<String>(
-                    value: currentStatus,
-                    items: ['مقبولة', 'انسحاب'].map((status) {
-                      return DropdownMenuItem<String>(
-                        value: status,
-                        child: Text(
-                          status,
-                          style: TextStyle(
-                            color: status == 'انسحاب' ?  Color.fromARGB(255, 247, 119, 134) : dark_Green,
-                             fontFamily: 'Zain',
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (newStatus) {
-                      if (newStatus != null) {
-                        setState(() {
-                          currentStatus = newStatus;
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        },
-      );
-    },
-  );
-}
-
   Widget buildVolunteerCampaignCard({
     required String imageUrl,
     required String title,
@@ -395,7 +378,7 @@ Widget buildScheduledList(
     bool isActive = status == 'نشطة';
 
     return InkWell(
-      onTap: onTap, // ✨ هون حطينا الإجراء
+      onTap: onTap, 
 
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
@@ -420,7 +403,7 @@ Widget buildScheduledList(
                 //  صورة الحملة
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: Image.asset(
+                  child: Image.network(
                     imageUrl,
                     width: 90,
                     height: 90,
@@ -441,6 +424,7 @@ Widget buildScheduledList(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: zeti,
+                          fontFamily: 'Zain'
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
@@ -461,7 +445,7 @@ Widget buildScheduledList(
                             decoration: BoxDecoration(
                               color:
                                   isActive
-                                      ? dark_Green.withOpacity(0.1)
+                                      ? zeti.withOpacity(0.1)
                                       : Colors.red.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(30),
                             ),
@@ -470,7 +454,7 @@ Widget buildScheduledList(
                               style: TextStyle(
                                 color:
                                     isActive
-                                        ? dark_Green
+                                        ? zeti
                                         : Color.fromARGB(255, 247, 119, 134),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
@@ -486,15 +470,16 @@ Widget buildScheduledList(
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
-                                  color: dark_Green,
+                                  color: zeti,
                                   letterSpacing: 0.5,
+                                  fontFamily: 'Zain'
                                 ),
                               ),
                               SizedBox(width: 6),
                               Icon(
                                 Icons.category_outlined,
                                 size: 18,
-                                color: dark_Green,
+                                color: zeti,
                               ),
                             ],
                           ),
@@ -516,8 +501,9 @@ Widget buildScheduledList(
                 Text(
                   '$tasksCount مهام',
                   style: TextStyle(
-                    color: dark_Green,
+                    color: zeti,
                     fontWeight: FontWeight.w600,
+                    fontFamily: 'Zain'
                   ),
                 ),
                 SizedBox(width: 6),

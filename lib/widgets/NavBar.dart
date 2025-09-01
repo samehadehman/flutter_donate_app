@@ -19,8 +19,8 @@ class BottomNavBar extends StatelessWidget {
       decoration: BoxDecoration(
         color: white,
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+          topLeft: Radius.circular(5),
+          topRight: Radius.circular(5),
         ),
         boxShadow: [
           BoxShadow(
@@ -31,13 +31,13 @@ class BottomNavBar extends StatelessWidget {
       ),
       child: ClipRRect(
         borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
+          topLeft: Radius.circular(5),
+          topRight: Radius.circular(5),
         ),
         child: BottomNavigationBar(
           backgroundColor: Color.fromARGB(255, 252, 248, 241),
           currentIndex: currentIndex,
-          selectedItemColor: dark_Green,
+          selectedItemColor: zeti,
           unselectedItemColor: Colors.grey,
           type: BottomNavigationBarType.fixed,
           onTap: (index) {

@@ -64,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
           children: [
             Image.asset('assets/images/Login.png', fit: BoxFit.cover),
             SingleChildScrollView(
-              padding: const EdgeInsets.only(top: 307, right: 25, left: 20),
+              padding: const EdgeInsets.only(top: 360, right: 25, left: 20),
               child: Form(
                 key: _formKey,
                 child: Column(

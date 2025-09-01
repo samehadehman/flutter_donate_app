@@ -134,7 +134,7 @@ class _CaseFormPageState extends State<CaseFormPage> {
                     offset: Offset(0, -15),
                   ),
                 ],
-                border: Border(top: BorderSide(color: dark_Green, width: 2)),
+                border: Border(top: BorderSide(color: zeti, width: 2)),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(55),
                   topRight: Radius.circular(55),
@@ -394,7 +394,7 @@ class _CaseFormPageState extends State<CaseFormPage> {
         ),
         validator:
             (val) => (val == null || val.isEmpty) ? 'هذا الحقل مطلوب' : null,
-        style: TextStyle(color: dark_Green),
+        style: TextStyle(color: zeti),
         cursorColor: zeti,
       ),
     );

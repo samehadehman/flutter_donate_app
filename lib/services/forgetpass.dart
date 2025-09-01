@@ -1,88 +1,55 @@
-// lib/core/network/api_service.dart
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:hello/models/forgetpass_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class ApiService {
-  static final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: 'http://127.0.0.1:8000/api', // غيرها للـ API الحقيقي
-      headers: {'Content-Type': 'application/json'},
-    ),
-  );
+  static final Dio _dio = Dio(BaseOptions(
+    baseUrl: 'http://192.168.207.158:8000/api',
+    headers: {'Content-Type': 'application/json'},
+  ));
 
+  // إرسال طلب الفورغيت
   static Future<ForgotPasswordModel> sendForgotPasswordEmail(String email) async {
-    try {
-      final response = await _dio.post(
-        '/userForgotPassword', 
-        data: {'email': email.trim()},
-      );
-
-      if (response.statusCode == 200) {
-        return ForgotPasswordModel.fromJson(response.data);
-      }
-// service
-else if (response.statusCode == 422) {
-      throw Exception("البريد الإلكتروني هذا غير موجود");
-
-}
-
-       else {
-        throw Exception('فشل إرسال البريد الإلكتروني');
-      }
-    } on DioError catch (e) {
-      if (e.response != null) {
-        throw Exception(e.response?.data['message'] ?? 'حدث خطأ غير معروف');
-      } else {
-        throw Exception('تعذر الاتصال ');
-      }
+    final response = await _dio.post('/userForgotPassword', data: {'email': email.trim()});
+    if (response.statusCode == 200) {
+      return ForgotPasswordModel.fromJson(response.data);
+    } else {
+      throw Exception(response.data['message'] ?? 'فشل إرسال البريد الإلكتروني');
     }
   }
 
+  // التحقق من الكود
   static Future<VerifyCodeModel> verifyCode(String email, String code) async {
-    try {
-      final response = await _dio.post(
-        '/userCheckCode',
-        data: {
-          'email': email.trim(),
-          'code': code.trim(),
-        },
-      );
-
-      if (response.statusCode == 200 ) {
-        return VerifyCodeModel.fromJson(response.data);
-      } else {
-        throw Exception('فشل التحقق من الكود');
-      }
-    } on DioError catch (e) {
-      if (e.response != null) {
-        throw Exception(e.response?.data['message'] ?? 'حدث خطأ غير معروف');
-      } else {
-        throw Exception('تعذر الاتصال ');
-      }
+    final response = await _dio.post('/userCheckCode', data: {'email': email.trim(), 'code': code.trim()});
+    if (response.statusCode == 200) {
+      return VerifyCodeModel.fromJson(response.data);
+    } else {
+      throw Exception(response.data['message'] ?? 'فشل التحقق من الكود');
     }
   }
-   static Future<ResetPasswordResponse> resetPassword(String code, String password) async {
-    try {
-      final response = await _dio.post(
-        "/userResetPassword/$code",
-        data: {
-          "password": password,
-        },
-        options: Options(
-          headers: {
-            "Accept": "application/json",
-          },
-        ),
-      );
 
-      if (response.statusCode == 200) {
-        return ResetPasswordResponse.fromJson(response.data);
-      } else {
-        throw Exception("فشل إعادة تعيين كلمة المرور");
+  // إعادة تعيين الباسورد
+  static Future<ResetPasswordResponse> resetPassword(String email, String code, String password) async {
+    final response = await _dio.post(
+      '/userResetPassword/$code',
+      data: {
+        'email': email.trim(),
+        'code': code.trim(),
+        'password': password.trim(),
+        'password_confirmation': password.trim(),
+      },
+    );
+    if (response.statusCode == 200) {
+      final token = response.data['data']['token'] ?? '';
+      if (token.isNotEmpty) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString('token', token);
       }
-    } on DioError catch (e) {
-      throw Exception(e.response?.data["message"] ?? "خطأ غير متوقع");
+      return ResetPasswordResponse.fromJson(response.data);
+    } else {
+      throw Exception(response.data['message'] ?? 'فشل إعادة تعيين كلمة المرور');
     }
   }
 }
+

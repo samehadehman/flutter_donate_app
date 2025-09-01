@@ -65,7 +65,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   String _parseError(String error) {
     if (error.contains("422") && error.contains("email")) {
       return "هذا الحساب موجود مسبقاً.";
-    } else if (error.contains("401")) {
+    } else if (error.contains("422")) {
       return "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
     } 
 

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hello/blocs/auth/auth_bloc.dart';
 import 'package:hello/core/color.dart';
 import 'package:hello/ui/view/home_page.dart';
+import 'package:hello/ui/view/loginpage.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class Signuppage extends StatefulWidget {
@@ -52,7 +53,6 @@ class _SignuppageState extends State<Signuppage> {
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthSuccess) {
-            // استخدم addPostFrameCallback لتجنب AssertionError
             WidgetsBinding.instance.addPostFrameCallback((_) {
               Navigator.pushReplacement(
                 context,

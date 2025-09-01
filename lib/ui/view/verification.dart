@@ -108,11 +108,11 @@
 //   }
 // }
 
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hello/blocs/forgetpass/forget_bloc.dart';
+import 'package:hello/blocs/forgetpass/forget_event.dart';
 import 'package:hello/blocs/forgetpass/forget_state.dart';
 import 'package:hello/core/color.dart';
 import 'package:hello/ui/view/reset_pass.dart';
@@ -133,7 +133,7 @@ class _VerificationPageState extends State<VerificationPage> {
   void _onVerifyPressed(BuildContext context) {
     if (codeController.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text("الرجاء إدخال الكود"),
           backgroundColor: Color.fromARGB(255, 247, 119, 134),
         ),
@@ -141,9 +141,12 @@ class _VerificationPageState extends State<VerificationPage> {
       return;
     }
 
-    // إرسال الحدث للبلوك للتحقق من الكود
-    context.read<ForgotPasswordBloc>().add(
-SubmitCodeEvent(email: widget.email, code: codeController.text.trim())
+    // إرسال الحدث لبلوك التحقق من الكود
+    context.read<VerifyCodeBloc>().add(
+          SubmitCodeEvent(
+            email: widget.email,
+            code: codeController.text.trim(),
+          ),
         );
   }
 
@@ -161,89 +164,94 @@ SubmitCodeEvent(email: widget.email, code: codeController.text.trim())
         children: [
           Image.asset('assets/images/Login.png', fit: BoxFit.cover),
           Padding(
-            padding: const EdgeInsets.only(top: 307, right: 25, left: 20),
-            child: Column(
-              children: [
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Column(
-                    children: [
-                      Text(
-                        'التحقق من البريد',
-                        style: TextStyle(
-                          color: dark_Green,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: 'Zain',
+            padding: const EdgeInsets.only(top: 350, right: 25, left: 20),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Column(
+                      children: [
+                        Text(
+                          'التحقق من البريد',
+                          style: TextStyle(
+                            color: dark_Green,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: 'Zain',
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 9),
-                      Container(height: 2, width: 110, color: dark_Green),
+                        const SizedBox(height: 9),
+                        Container(height: 2, width: 110, color: dark_Green),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  PinCodeTextField(
+                    appContext: context,
+                    length: 6,
+                    obscureText: false,
+                    animationType: AnimationType.fade,
+                    pinTheme: PinTheme(
+                      shape: PinCodeFieldShape.box,
+                      borderRadius: BorderRadius.circular(5),
+                      fieldHeight: 50,
+                      fieldWidth: 40,
+                      activeColor: zeti,
+                      selectedColor: Light_Green,
+                      inactiveColor: Light_Green,
+                    ),
+                    animationDuration: const Duration(milliseconds: 300),
+                    enableActiveFill: false,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
                     ],
+                    onCompleted: (v) => codeController.text = v,
+                    onChanged: (value) {},
                   ),
-                ),
-                const SizedBox(height: 32),
-                PinCodeTextField(
-                  appContext: context,
-                  length: 6,
-                  obscureText: false,
-                  animationType: AnimationType.fade,
-                  pinTheme: PinTheme(
-                    shape: PinCodeFieldShape.box,
-                    borderRadius: BorderRadius.circular(5),
-                    fieldHeight: 50,
-                    fieldWidth: 40,
-                    activeColor: zeti,
-                    selectedColor: Light_Green,
-                    inactiveColor: Light_Green,
+                  const SizedBox(height: 40),
+                  ElevatedButtonWidget(
+                    textElevated: 'تأكيد',
+                    height: 40,
+                    width: 45,
+                    onPressed: () => _onVerifyPressed(context),
                   ),
-                  animationDuration: Duration(milliseconds: 300),
-                  enableActiveFill: false,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                  ],
-                  onCompleted: (v) => codeController.text = v,
-                  onChanged: (value) {},
-                ),
-                const SizedBox(height: 40),
-                ElevatedButtonWidget(
-                  textElevated: 'تأكيد',
-                  height: 40,
-                  width: 45,
-                  onPressed: () => _onVerifyPressed(context),
-                ),
-                const SizedBox(height: 20),
-
-                // هنا نراقب حالة البلوك
-                BlocConsumer<ForgotPasswordBloc, ForgotPasswordState>(
-                  listener: (context, state) {
-                    if (state is CodeVerificationSuccess) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => ResetPasswordPage(email: widget.email),
-                        ),
-                      );
-                    } else if (state is ForgotPasswordFailure) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(state.message),
-                          backgroundColor: Color.fromARGB(255, 247, 119, 134),
-                        ),
-                      );
-                    }
-                  },
-                  builder: (context, state) {
-                    if (state is ForgotPasswordLoading) {
-                      return CircularProgressIndicator(
-                        color: dark_Green,
-                      );
-                    }
-                    return SizedBox.shrink();
-                  },
-                ),
-              ],
+                  const SizedBox(height: 20),
+              
+                  // BlocConsumer لبلوك التحقق من الكود
+                  BlocConsumer<VerifyCodeBloc, VerifyCodeState>(
+                    listener: (context, state) {
+                      if (state is VerifyCodeSuccess) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => ResetPasswordPage(
+                              code: state.code,
+                              email: widget.email,
+                            ),
+                          ),
+                        );
+                      } else if (state is VerifyCodeFailure) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(state.error),
+                            backgroundColor: const Color.fromARGB(255, 247, 119, 134),
+                          ),
+                        );
+                      }
+                    },
+                    builder: (context, state) {
+                      if (state is VerifyCodeLoading) {
+                        return CircularProgressIndicator(
+                          color: dark_Green,
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -251,3 +259,4 @@ SubmitCodeEvent(email: widget.email, code: codeController.text.trim())
     );
   }
 }
+
