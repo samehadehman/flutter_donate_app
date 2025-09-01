@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:hello/models/scheduledTask_model.dart';
 import 'package:hello/models/voluntingCampaignDetails_model.dart';
 import 'package:hello/models/voluntingCampaigns_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CampaignService {
   final Dio _dio = Dio();
@@ -9,7 +10,7 @@ class CampaignService {
   Future<List<CampaignModel>> getAllCampaigns(String token) async {
     try {
       final response = await _dio.get(
-        "http://192.168.207.158:8000/api/getAllVoluntingCampigns",
+        "http://192.168.31.158:8000/api/getAllVoluntingCampigns",
         options: Options(
           headers: {"Authorization": "Bearer $token"},
         ),
@@ -28,7 +29,7 @@ class CampaignService {
 
    Future<CampaignDetailsModel> getCampaignDetails(int id , String token) async {
     final response = await _dio.get(
-      "http://192.168.207.158:8000/api/getVoluntingCampigndetails/$id",
+      "http://192.168.31.158:8000/api/getVoluntingCampigndetails/$id",
       options: Options(
         headers: {"Authorization": "Bearer $token"},
       ),
@@ -44,42 +45,73 @@ class CampaignService {
     }
   }
 
-  Future<Task> getTaskDetails(int taskId, String token) async {
-  final response = await _dio.get(
-    "http://192.168.207.158:8000/api/getTaskDetails/$taskId",
-    options: Options(
-      headers: {"Authorization": "Bearer $token"},
-    ),
-  );
-  print('Full Response: ${response.data}');
+ Future<Task> getTaskDetails(int taskId, String token) async {
+  try {
+    final prefs = await SharedPreferences.getInstance();
+final token = prefs.getString('token') ?? '';
 
-
-  if (response.statusCode == 200 && response.data['status'] == 1) {
-    final taskJson = Map<String, dynamic>.from(response.data['data']); // حوّلناها Map<String,dynamic>
- print('Task JSON: $taskJson');
- final task = Task.fromJson(taskJson);
-
-
-  return task;
-
-  
-    } else {
-    throw Exception("فشل في جلب تفاصيل التاسك");
-  }
-}
- Future<List<ScheduledTask>> getScheduledTasks(String token) async {
     final response = await _dio.get(
-      "http://192.168.207.158:8000/api/upComingTasks", // عدل الرابط حسب API
+      "http://192.168.31.158:8000/api/getTaskDetails/$taskId",
       options: Options(
-        headers: {"Authorization": "Bearer $token"},
+        headers: {"Authorization": "Bearer $token" ,
+        "Accept": "application/json"
+        },
+      validateStatus: (status) => true, // يسمح لكل status
+
       ),
     );
+
+    print('Status Code: ${response.statusCode}');
+    print('Raw Response: ${response.data}');
+
+    if (response.statusCode == 200 && response.data['status'] == 1) {
+      final taskJson = Map<String, dynamic>.from(response.data['data']);
+      print('Task JSON: $taskJson');
+      return Task.fromJson(taskJson);
+    } else {
+      throw Exception("فشل في جلب تفاصيل التاسك: ${response.data}");
+    }
+  } on DioException catch (e) {
+    print("Dio Error → Status: ${e.response?.statusCode}");
+    print("Dio Error → Data: ${e.response?.data}");
+    print("Dio Error → Message: ${e.message}");
+    throw Exception("API error: ${e.response?.statusCode}");
+  } catch (e) {
+    print("Unexpected Error: $e");
+    rethrow;
+  }
+}
+
+
+ Future<List<ScheduledTask>> getScheduledTasks(String token) async {
+
+    final response = await _dio.get(
+      "http://192.168.31.158:8000/api/upComingTasks",
+      options: Options(
+        headers: {"Authorization": "Bearer $token"},
+        validateStatus: (status) {
+      // ✅ أي status code بين 200 و 500 خليه يرجع response عادي
+      return status != null && status < 500;
+    },
+      ),
+    );
+print('Status Code: ${response.statusCode}');
+print('Response Data: ${response.data}');
 
     if (response.statusCode == 200 && response.data['status'] == 1) {
       List<dynamic> data = response.data['data'];
       return data.map((taskJson) => ScheduledTask.fromJson(taskJson)).toList();
-    } else {
+    }
+    
+    else if (response.statusCode == 401) {
+ final message = response.data['message'] ?? "ليس لديك ملف تطوعي";
+   print("🔥 Service 401 Message: $message");
+
+  throw Exception(message);    }
+     else {
       throw Exception("فشل في جلب المهام المجدولة");
     }
+    
+
   }
 }

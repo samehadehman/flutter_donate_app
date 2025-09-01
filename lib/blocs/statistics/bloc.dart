@@ -70,9 +70,9 @@ class InKindBloc extends Bloc<InKindEvent, InKindDonationState> {
     on<FetchInkindEvent>((event, emit) async {
       emit(InKindDonationLoading());
       try {
-        final prefs = await SharedPreferences.getInstance();
-        final token = prefs.getString('auth_token') ?? '';
-        print('Token: $token');
+    
+     final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('auth_token') ?? '';    
 
         final data = await service.gettotalInkindDonations(token);
         if (data != null) {

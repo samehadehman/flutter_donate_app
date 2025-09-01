@@ -32,5 +32,14 @@ class VolunteerProfileView {
       volunteerName: json['volunteer_name'],
       timeBecomingVolunteerMember: json['time_becoming_volunteer_member'],
     );
+
+
+    
+  }
+  Map<String, dynamic> toJson() {
+    return {
+      'volunteer_name': volunteerName,
+      'time_becoming_volunteer_member': timeBecomingVolunteerMember,
+    };
   }
 }

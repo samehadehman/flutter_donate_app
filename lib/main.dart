@@ -7,6 +7,7 @@ import 'package:hello/blocs/profile/mini_event.dart';
 import 'package:hello/blocs/userinfo/userinfo_bloc.dart';
 import 'package:hello/blocs/userinfo/userinfo_event.dart';
 import 'package:hello/blocs/volunteerFile/volunteerform_bloc.dart';
+import 'package:hello/blocs/volunteerFile/volunteerform_event.dart';
 import 'package:hello/blocs/voluntingCamp/scheduledTasks_bloc.dart';
 import 'package:hello/blocs/voluntingCamp/scheduledTasks_event.dart';
 import 'package:hello/blocs/wallet/wallet_bloc.dart';
@@ -55,9 +56,12 @@ BlocProvider<ForgotPasswordBloc>(
       BlocProvider<VerifyCodeBloc>(
       create: (context) => VerifyCodeBloc(),
     ),
-    BlocProvider(
-          create: (_) => VolunteerProfileBloc(VolunteerService(dio) , UserService(dio: dio)),
-        ),
+   BlocProvider(
+  create: (_) => VolunteerProfileBloc(
+    VolunteerService(dio),
+    UserService(dio: dio),
+  )..add(GetVolunteerProfileEvent()), // ✅ هاد السطر بجيب الملف من السيرفر أول ما يشتغل
+),
         BlocProvider<UserInfoBloc>(
           create: (_) => UserInfoBloc(UserInfoService())..add(FetchUserInfo()),
         ),
@@ -76,7 +80,7 @@ BlocProvider<ForgotPasswordBloc>(
       child: MaterialApp(
     
         debugShowCheckedModeBanner: false,
-        initialRoute: '/home',
+        initialRoute: '/loginpage',
         routes: {
           '/loginpage': (context) => LoginPage(),
          '/signuppage': (context) => Signuppage(),

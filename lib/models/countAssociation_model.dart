@@ -32,9 +32,9 @@ class TotalInkindDonation {
 
   factory TotalInkindDonation.fromJson(Map<String, dynamic> json) {
     return TotalInkindDonation(
-      status: json['status'],
-      data: json['data'],
-      message: json['message'],
+    status: int.tryParse(json['status'].toString()) ?? 0,
+    data: int.tryParse(json['data'].toString()) ?? 0,
+    message: json['message']?.toString() ?? '',
     );
   }
 }

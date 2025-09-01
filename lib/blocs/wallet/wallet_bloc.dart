@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hello/models/wallet_model.dart';
 import 'package:hello/services/wallet_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'wallet_event.dart';
@@ -38,7 +39,7 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
         if (success) {
  final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
-                if (token == null) throw Exception("Token not found");
+     if (token == null) throw Exception("Token not found");
 
           final wallet = await _service.getWallet(token);
           if (wallet != null) {
@@ -51,6 +52,28 @@ class WalletBloc extends Bloc<WalletEvent, WalletState> {
         }
       } catch (e) {
         emit(WalletError("حدث خطأ أثناء إنشاء المحفظة"));
+      }
+    });
+on<UpdateWallet>((event, emit) async {
+      emit(WalletLoading());
+      try {
+        final result = await _service.updateWallet(wallet_value: event.amount);
+        if (result != null) {
+          final status = result['status'] ?? 0;
+          final data = result['data'];
+          final message = result['message'] ?? "خطأ غير معروف";
+
+          if (status == 1 && data != null) {
+            final updatedWallet = WalletModel.fromJson(Map<String, dynamic>.from(data));
+            emit(WalletLoaded(updatedWallet));
+          } else {
+            emit(WalletError("فشل تعديل المحفظة: $message"));
+          }
+        } else {
+          emit(WalletError("فشل تعديل المحفظة: لا يوجد رد من السيرفر"));
+        }
+      } catch (e) {
+        emit(WalletError("حدث خطأ أثناء تعديل المحفظة: $e"));
       }
     });
   }

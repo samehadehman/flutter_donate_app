@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hello/blocs/voluntingCamp/task_bloc.dart';
+import 'package:hello/blocs/voluntingCamp/task_event.dart';
+import 'package:hello/blocs/voluntingCamp/task_state.dart';
 import 'package:hello/blocs/voluntingCamp/voluntCampDetail_bloc.dart';
 import 'package:hello/blocs/voluntingCamp/voluntCampDetail_event.dart';
 import 'package:hello/blocs/voluntingCamp/voluntCampDetail_state.dart';
@@ -393,6 +396,8 @@ class _DetailsAssociationcampsState extends State<DetailsAssociationcamps> {
               task: task,
               scaffoldContext: context,
               token: token,
+                service: CampaignService(), // << لازم تضيفه
+
             ),
           )
             .toList(),
@@ -422,83 +427,122 @@ class _DetailsAssociationcampsState extends State<DetailsAssociationcamps> {
 class TaskCard extends StatelessWidget {
   final Task task;
   final BuildContext scaffoldContext;
-   final String token;
-  const TaskCard({required this.task, required this.scaffoldContext, super.key, required this.token});
+  final String token;
+  final CampaignService service;
+
+  const TaskCard({
+    required this.task,
+    required this.scaffoldContext,
+    required this.token,
+    required this.service,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
-    
     return InkWell(
       onTap: () {
+        final taskBloc = TaskBloc(service);
+        taskBloc.add(FetchTaskDetails(taskId: task.id, token: token));
+
         showDialog(
           context: context,
-         builder: (dialogContext) {
-            return FutureBuilder<Task>(
-              future: CampaignService().getTaskDetails(task.id, token),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasError) {
-                  return AlertDialog(
-                    content: Text('حدث خطأ: ${snapshot.error}'),
-                  );
-                } else if (snapshot.hasData) {
-                  final detailedTask = snapshot.data!;
-                  return AlertDialog(
-                    backgroundColor: babygreen,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                    title: Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Text(
-                        detailedTask.taskName,
-                        style: TextStyle(fontFamily: 'Zain', fontWeight: FontWeight.bold, color: zeti),
-                      ),
-                    ),
-                    content: Directionality(
+          builder: (dialogContext) {
+            return BlocProvider.value(
+              value: taskBloc,
+              child: BlocBuilder<TaskBloc, TaskState>(
+                builder: (context, state) {
+                  if (state is TaskLoading) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (state is TaskError) {
+                    return AlertDialog(
+                      content: Text('حدث خطأ: ${state.message}',
+                          style: TextStyle(fontFamily: 'Zain', color: zeti)),
+                    );
+                  } else if (state is TaskLoaded) {
+                    final detailedTask = state.task;
+                    return AlertDialog(
+                      backgroundColor: babygreen,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15)),
+                      title: Directionality(
                         textDirection: TextDirection.rtl,
-
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text( 'الوصف: ${detailedTask.description}',
-        style: TextStyle(fontFamily: 'Zain', color: zeti),
-        textAlign: TextAlign.right,),
-                       Text( 'عدد الشواغر: ${detailedTask.numberVolunterNeed} متاح',
-        style: TextStyle(fontFamily: 'Zain', color: zeti),
-        textAlign: TextAlign.right,),
-Text(
-        'عدد الساعات: ${detailedTask.hours}',
-        style: TextStyle(fontFamily: 'Zain', color: zeti),
-        textAlign: TextAlign.right,
-      ),                        ],
+                        child: Text(
+                          detailedTask.taskName,
+                          style: TextStyle(
+                              fontFamily: 'Zain',
+                              fontWeight: FontWeight.bold,
+                              color: zeti),
+                        ),
                       ),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () => Navigator.pop(dialogContext),
-                        child: Text('إغلاق', style: TextStyle(fontFamily: 'Zain', color: zeti, fontWeight: FontWeight.bold, fontSize: 16)),
-                      ),
-                      ElevatedButton.icon(
-                        icon: Icon(Icons.volunteer_activism, size: 18, color: zeti),
-                        label: Text('تطوع الآن', style: TextStyle(fontFamily: 'Zain', color: zeti, fontWeight: FontWeight.bold, fontSize: 16)),
-                        onPressed: () {
-                          Navigator.pop(dialogContext);
-                          ScaffoldMessenger.of(scaffoldContext).showSnackBar(
-                            SnackBar(
-                              content: Text('تم تقديم طلب التطوع لمهمة "${detailedTask.taskName}"'),
-                              duration: Duration(seconds: 3),
-                              backgroundColor: Color.fromARGB(255, 247, 119, 134),
+                      content: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'الوصف: ${detailedTask.description}',
+                              style: TextStyle(fontFamily: 'Zain', color: zeti),
+                              textAlign: TextAlign.right,
                             ),
-                          );
-                        },
+                            Text(
+                              'عدد الشواغر: ${detailedTask.numberVolunterNeed} متاح',
+                              style: TextStyle(fontFamily: 'Zain', color: zeti),
+                              textAlign: TextAlign.right,
+                            ),
+                            Text(
+                              'عدد الساعات: ${detailedTask.hours}',
+                              style: TextStyle(fontFamily: 'Zain', color: zeti),
+                              textAlign: TextAlign.right,
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  );
-                } else {
-                  return AlertDialog(content: Text('لا توجد بيانات'));
-                }
-              },
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(dialogContext),
+                          child: Text(
+                            'إغلاق',
+                            style: TextStyle(
+                                fontFamily: 'Zain',
+                                color: zeti,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                        ),
+                        ElevatedButton.icon(
+                          icon: Icon(Icons.volunteer_activism, size: 18, color: zeti),
+                          label: Text(
+                            'تطوع الآن',
+                            style: TextStyle(
+                                fontFamily: 'Zain',
+                                color: zeti,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16),
+                          ),
+                          onPressed: () {
+                            Navigator.pop(dialogContext);
+                            ScaffoldMessenger.of(scaffoldContext).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                    'تم تقديم طلب التطوع لمهمة "${detailedTask.taskName}"'),
+                                duration: Duration(seconds: 3),
+                                backgroundColor: Color.fromARGB(255, 247, 119, 134),
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  } else {
+                    return AlertDialog(
+                      content: Text('لا توجد بيانات',
+                          style: TextStyle(fontFamily: 'Zain', color: zeti)),
+                    );
+                  }
+                },
+              ),
             );
           },
         );
@@ -509,7 +553,9 @@ Text(
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: medium_Green, blurRadius: 6, offset: Offset(0, 3))],
+          boxShadow: [
+            BoxShadow(color: medium_Green, blurRadius: 6, offset: Offset(0, 3))
+          ],
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -518,8 +564,11 @@ Text(
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(task.taskName, style: TextStyle(fontFamily: 'Zain', fontWeight: FontWeight.bold, color: zeti)),
-                Text('شواغر: ${task.numberVolunterNeed}', style: TextStyle(fontFamily: 'Zain', color: zeti)),
+                Text(task.taskName,
+                    style: TextStyle(
+                        fontFamily: 'Zain', fontWeight: FontWeight.bold, color: zeti)),
+                Text('شواغر: ${task.numberVolunterNeed}',
+                    style: TextStyle(fontFamily: 'Zain', color: zeti)),
               ],
             ),
           ],
@@ -528,6 +577,7 @@ Text(
     );
   }
 }
+
 
 class IconWithText extends StatelessWidget {
   final IconData icon;

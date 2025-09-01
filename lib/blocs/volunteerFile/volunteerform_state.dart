@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:hello/models/createvolunteerpro_model.dart';
 import 'package:hello/models/showVolunteerpro_model.dart';
-import 'package:hello/models/volunteerProfileForm_model.dart';
 
 
 abstract class VolunteerProfileState {}

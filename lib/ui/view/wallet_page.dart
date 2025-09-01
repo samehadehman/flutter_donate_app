@@ -6,6 +6,12 @@ import 'package:hello/core/color.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class CreateWalletPage extends StatefulWidget {
+
+  final bool isEdit;
+  final String? currentAmount;
+
+    CreateWalletPage({this.isEdit = false, this.currentAmount});
+
   @override
   State<CreateWalletPage> createState() => _CreateWalletPageState();
 }
@@ -15,6 +21,17 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
   final TextEditingController amountController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController confirmPasswordController = TextEditingController();
+
+
+
+ @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit && widget.currentAmount != null) {
+      amountController.text = widget.currentAmount!;
+    }
+  }
+
 
   @override
   void dispose() {
@@ -26,15 +43,34 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
 
  void _submit() {
     if (_formKey.currentState!.validate()) {
-      // إرسال حدث للـ Bloc لإنشاء المحفظة
-      final amount = double.parse(amountController.text);
+      final amount = int.tryParse(amountController.text) ?? 0;
+
+       if (amount == null) {
+      // لو القيمة مش رقم صحيح
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("يرجى إدخال رقم صحيح للمبلغ")),
+      );
+      return;
+    }
       final password = passwordController.text;
       final confirmPassword = confirmPasswordController.text;
 
-      context.read<WalletBloc>().add(CreateWallet(amount: amount, password: password ,         confirmPassword: confirmPassword,
-));
+    print("Submitting amount: $amount");
+ if (widget.isEdit) {
+        context.read<WalletBloc>().add(UpdateWallet(
+    amount: amount, // <--- int
+
+            ));
+      } else {
+        context.read<WalletBloc>().add(CreateWallet(
+              amount: amount,
+              password: password,
+              confirmPassword: confirmPassword,
+            ));
+      }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,8 +80,7 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
       BlocListener<WalletBloc, WalletState>(
         listener: (context, state) {
           if (state is WalletLoaded) {
-            // بعد ما ينشأ المحفظة، يرجع للتاب تلقائي
-           context.read<WalletBloc>().add(FetchWallet()); // تحدث البيانات
+           context.read<WalletBloc>().add(FetchWallet()); 
 
             Navigator.pop(context);
 
@@ -112,8 +147,8 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                   borderRadius: BorderRadius.circular(90),
                   border: Border.all(color: const Color(0XFFF2F4EC)),
                 ),
-                child: const Text(
-                  ' إنشاء محفظة',
+                child:  Text(
+               widget.isEdit ? 'تعديل المحفظة' : 'إنشاء محفظة',
                   style: TextStyle(
                     fontSize: 20,
                     color: Color(0XFFF2F4EC),
@@ -154,8 +189,9 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
           child: Column(
             children: [
              Text(
-              '! يرجى إدخال المبلغ',
-                  style: TextStyle(fontSize: 18, color: zeti, fontWeight: FontWeight.bold ,  fontFamily: 'Zain',),
+widget.isEdit
+                              ? '! يرجى إدخال المبلغ الجديد'
+                              : '! يرجى إدخال المبلغ وكلمة المرور',                  style: TextStyle(fontSize: 18, color: zeti, fontWeight: FontWeight.bold ,  fontFamily: 'Zain',),
                   textAlign: TextAlign.center,
                 ),
                 SizedBox(height: 30,),
@@ -186,6 +222,7 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                 },
               ),
               SizedBox(height: 16),
+              if (!widget.isEdit) ...[
               TextFormField(
                 controller: passwordController,
                 obscureText: true,
@@ -239,11 +276,12 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 30),
+              SizedBox(height: 30),]
+              else
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButtonWidget(
-                  textElevated: 'إنشاء ',
+  textElevated: widget.isEdit ? 'تحديث' : 'إنشاء',
                               height: 40,
                               width: 30,
                   onPressed: _submit,

@@ -20,7 +20,7 @@ class UserModel {
     }
 
     if (rawPhoto.startsWith('http://localhost')) {
-      rawPhoto = rawPhoto.replaceFirst('http://localhost', 'http://192.168.207.158');
+      rawPhoto = rawPhoto.replaceFirst('http://localhost', 'http://192.168.31.158');
     }
 
 

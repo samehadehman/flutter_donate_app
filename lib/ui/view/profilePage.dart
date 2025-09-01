@@ -423,8 +423,6 @@ Widget buildWalletTab(
     ),
   ),
 );
-    // context.read<WalletBloc>().add(FetchWallet());
-
                   },
                 ),
               ],
@@ -438,7 +436,6 @@ Widget buildWalletTab(
       },
     );
   }
-
 
 Widget buildWalletContent(BuildContext context, {required String amount, required String createdAt}) {
   return SingleChildScrollView(
@@ -469,6 +466,25 @@ Widget buildWalletContent(BuildContext context, {required String amount, require
                   'محفظة الكترونية',
                   style: TextStyle(color: Colors.white70, fontSize: 16, fontWeight: FontWeight.w600, letterSpacing: 1.5, fontFamily: 'Zain'),
                 ),
+                SizedBox(width: 8),
+                // أيقونة التعديل
+                InkWell(
+                  onTap: () async {
+                    // فتح صفحة تعديل/إنشاء المحفظة
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => BlocProvider.value(
+                          value: context.read<WalletBloc>(),
+                          child: CreateWalletPage(isEdit: true, currentAmount: amount),
+                        ),
+                      ),
+                    );
+                    // بعد الرجوع، جلب أحدث بيانات
+                    context.read<WalletBloc>().add(FetchWallet());
+                  },
+                  child: Icon(Icons.edit, color: Colors.white, size: 22),
+                ),
               ],
             ),
             SizedBox(height: 24),
@@ -491,6 +507,7 @@ Widget buildWalletContent(BuildContext context, {required String amount, require
     ),
   );
 }
+
 
 Widget buildMyInfoTab(BuildContext context) {
   return  BlocBuilder<UserInfoBloc, UserInfoState>(

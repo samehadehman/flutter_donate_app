@@ -224,10 +224,9 @@ final SearchService searchService = SearchService(); // هذا فقط لتعري
                 ),
               ),
               const SizedBox(height: 12),
-              SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
+              Center(
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     sectionCard(
                       context,
@@ -241,12 +240,7 @@ final SearchService searchService = SearchService(); // هذا فقط لتعري
                       Icons.volunteer_activism,
                       DummyPage('التبرع العيني'),
                     ),
-                    sectionCard(
-                      context,
-                      'الكوارث',
-                      Icons.warning,
-                      DummyPage('الكوارث'),
-                    ),
+                  
                     sectionCard(
                       context,
                       'قسم التطوع',
@@ -302,11 +296,11 @@ final SearchService searchService = SearchService(); // هذا فقط لتعري
                               final c = campaigns[index];
                               return buildEmergencyCard(
                                 title: c.title,
-                                imageUrl: c.photo, // 👈 شبكة أو أصول
+                                imageUrl: c.photo, 
                                 location: c.location,
                                 money:
                                     c.donationAmount
-                                        .round(), // من String لـ double
+                                        .round(), 
                                 days:
                                     c.amountToComplete
                                         .toString(),
@@ -341,7 +335,6 @@ final SearchService searchService = SearchService(); // هذا فقط لتعري
               ),
               const SizedBox(height: 12),
 
-              // الصف الأول: المستفيدين (EndedCampaigns) + عدد الجمعيات (Statistics)
               Row(
                 children: [
                   Expanded(
@@ -558,13 +551,13 @@ Widget buildEmergencyCard({
             // border: Border.all(color: medium_Green,),
             borderRadius: BorderRadius.circular(40),
             image: DecorationImage(image: imgProvider, fit: BoxFit.cover),
-            boxShadow: [
-              BoxShadow(
-                color: zeti.withOpacity(0.4),
-                blurRadius: 4,
-                offset: Offset(10, 2),
-              ),
-            ],
+            // boxShadow: [
+            //   BoxShadow(
+            //     color: zeti.withOpacity(0.4),
+            //     blurRadius: 4,
+            //     offset: Offset(10, 2),
+            //   ),
+            // ],
           ),
         ),
       ),
@@ -617,7 +610,9 @@ Widget buildEmergencyCard({
             ),
                 ],
                   ),
+                
                   subtitle: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Icon(Icons.location_on, color: Color(0xFFb3beb0), size: 16),
                       Text(
@@ -628,6 +623,9 @@ Widget buildEmergencyCard({
                           fontWeight: FontWeight.w400,
                           fontFamily: 'Zain',
                         ),
+                         maxLines: null, 
+                        overflow: TextOverflow.ellipsis, 
+                        softWrap: true,
                       ),
                       const SizedBox(width: 25),
                       Icon(Icons.money, color: Color(0xFFb3beb0), size: 16),

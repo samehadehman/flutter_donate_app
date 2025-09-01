@@ -14,7 +14,7 @@ class VolunteerService {
     final token = prefs.getString('token') ?? '';
 
     final response = await _dio.post(
-      "http://192.168.207.158:8000/api/createVoluntingProfile",
+      "http://192.168.31.158:8000/api/createVoluntingProfile",
       options: Options(headers: {"Authorization": "Bearer $token"}),
       data: body,
     );
@@ -27,7 +27,7 @@ class VolunteerService {
     final token = prefs.getString('token') ?? '';
 
     final response = await _dio.get(
-      "http://192.168.207.158:8000/api/showVoluntingProfile",
+      "http://192.168.31.158:8000/api/showVoluntingProfile",
       options: Options(headers: {"Authorization": "Bearer $token"}),
     );
 
@@ -39,7 +39,7 @@ class VolunteerService {
     final token = prefs.getString('token') ?? '';
 
     final response = await _dio.get(
-      "http://192.168.207.158:8000/api/showVoluntingProfileDetails",
+      "http://192.168.31.158:8000/api/showVoluntingProfileDetails",
       options: Options(headers: {"Authorization": "Bearer $token"}),
     );
 

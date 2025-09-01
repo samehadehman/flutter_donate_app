@@ -11,6 +11,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     on<LoadUser>((event, emit) async {
       emit(UserLoading());
       try {
+        
         final user = await service.fetchUserProfile();
         emit(UserLoaded(user));
       } catch (e) {

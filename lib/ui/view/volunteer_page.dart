@@ -130,7 +130,6 @@ class VolunteerCampaignsPage extends StatelessWidget {
                         Expanded(
                           child: TabBarView(
                             children: [
-                              // ✅ BlocBuilder لمتابعة الحملات
                               BlocBuilder<CampaignBloc, CampaignState>(
                                 builder: (context, state) {
                                   if (state is CampaignLoading) {
@@ -150,14 +149,45 @@ class VolunteerCampaignsPage extends StatelessWidget {
                                 },
                               ),
 
-                              // ✅ جدولة المهام (ثابتة حالياً)
  BlocBuilder<ScheduledTasksBloc, ScheduledTasksState>(
                               builder: (context, state) {
                                 if (state is ScheduledTasksLoading) {
                                   return const Center(child: CircularProgressIndicator());
                                 } else if (state is ScheduledTasksError) {
                                   return Center(child: Text('حدث خطأ: ${state.message}'));
-                                } else if (state is ScheduledTasksLoaded) {
+
+                                } 
+                                else if (state is NoVolunteerProfile) {
+  return Center(
+    child: Card(
+      color: Colors.orange[100],
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      margin: const EdgeInsets.all(16),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 40),
+            const SizedBox(height: 12),
+            Text(
+               state.message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'Zain',
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+                                else if (state is ScheduledTasksLoaded) {
                                   final tasks = state.tasks;
                                   if (tasks.isEmpty) return Center(child: Text('لا توجد مهام مجدولة'));
                                   return ListView.builder(

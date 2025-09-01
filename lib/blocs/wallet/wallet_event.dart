@@ -4,7 +4,7 @@ import 'package:hello/models/wallet_model.dart';
 abstract class WalletEvent {}
 class FetchWallet extends WalletEvent {}
 class CreateWallet extends WalletEvent {
-  final double amount;
+  final int amount;
   final String password;
   final String confirmPassword;
 
@@ -22,4 +22,11 @@ class WalletEmpty extends WalletState {}
 class WalletError extends WalletState {
   final String message;
   WalletError(this.message);
+}
+
+class UpdateWallet extends WalletEvent {
+  final int amount;
+
+
+  UpdateWallet({required this.amount});
 }

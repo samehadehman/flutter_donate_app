@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class WalletService {
   final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.207.158:8000/api',
+    baseUrl: 'http://192.168.31.158:8000/api',
     headers: {'Accept': 'application/json'},
   ));
 
@@ -19,7 +19,7 @@ class WalletService {
       );
 
       print('GET Wallet Status: ${response.statusCode}');
-      print('GET Wallet Response: ${response.data}');
+      print('GET Wallet Response: ${response}');
 
       if (response.statusCode == 200 && response.data['status'] == 1) {
         return WalletModel.fromJson(response.data['data']);
@@ -33,7 +33,7 @@ class WalletService {
 
   // إنشاء المحفظة
   Future<bool> createWallet({
-    required double wallet_value,
+    required int wallet_value,
     required String wallet_password,
     required String wallet_password_confirmation,
   }) async {
@@ -55,7 +55,7 @@ class WalletService {
       );
 
       print('POST Wallet Status: ${response.statusCode}');
-      print('POST Wallet Response: ${response.data}');
+      print('POST Wallet Response: ${response}');
 
       return response.statusCode == 200 && response.data['status'] == 1;
     } catch (e) {
@@ -63,4 +63,42 @@ class WalletService {
       return false;
     }
   }
+
+  Future<Map<String, dynamic>?> updateWallet({
+  required int wallet_value,
+
+}) async {
+  final prefs = await SharedPreferences.getInstance();
+  final token = prefs.getString('token') ?? '';
+  if (token.isEmpty) throw Exception("Token not found");
+
+  try {
+    final response = await _dio.post(
+      '/editWallet', // رابط تعديل المحفظة عندك بالـ API
+      data: {
+        'wallet_value': wallet_value.toString(),
+
+      },
+      options: Options(
+        headers: {"Authorization": "Bearer $token"},
+        validateStatus: (_) => true,
+      ),
+    );
+
+    print('PUT Wallet Status: ${response.statusCode}');
+    print('PUT Wallet Response: ${response.data}');
+
+ if (response.statusCode == 200) {
+      return response.data; // بيرجع JSON كامل فيه status و message
+    }
+ return null;
+      } catch (e) {
+    print('Error updating wallet: $e');
+  }
+ 
+}
+
+
+
+
 }

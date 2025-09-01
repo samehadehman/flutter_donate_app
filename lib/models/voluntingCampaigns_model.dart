@@ -26,7 +26,7 @@ class CampaignModel {
 
     if (rawPhoto.startsWith('http://localhost')) {
       rawPhoto = rawPhoto.replaceFirst(
-          'http://localhost', 'http://192.168.207.158'); 
+          'http://localhost', 'http://192.168.31.158'); 
     }
 
     return CampaignModel(

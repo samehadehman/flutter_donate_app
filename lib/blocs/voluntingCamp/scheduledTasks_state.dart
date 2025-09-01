@@ -13,3 +13,7 @@ class ScheduledTasksError extends ScheduledTasksState {
   final String message;
   ScheduledTasksError(this.message);
 }
+class NoVolunteerProfile extends ScheduledTasksState {
+  final String message;
+  NoVolunteerProfile(this.message);
+}
