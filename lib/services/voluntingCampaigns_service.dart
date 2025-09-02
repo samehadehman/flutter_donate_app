@@ -10,7 +10,7 @@ class CampaignService {
   Future<List<CampaignModel>> getAllCampaigns(String token) async {
     try {
       final response = await _dio.get(
-        "http://192.168.31.158:8000/api/getAllVoluntingCampigns",
+        "http://192.168.28.158:8000/api/getAllVoluntingCampigns",
         options: Options(
           headers: {"Authorization": "Bearer $token"},
         ),
@@ -29,7 +29,7 @@ class CampaignService {
 
    Future<CampaignDetailsModel> getCampaignDetails(int id , String token) async {
     final response = await _dio.get(
-      "http://192.168.31.158:8000/api/getVoluntingCampigndetails/$id",
+      "http://192.168.28.158:8000/api/getVoluntingCampigndetails/$id",
       options: Options(
         headers: {"Authorization": "Bearer $token"},
       ),
@@ -51,7 +51,7 @@ class CampaignService {
 final token = prefs.getString('token') ?? '';
 
     final response = await _dio.get(
-      "http://192.168.31.158:8000/api/getTaskDetails/$taskId",
+      "http://192.168.28.158:8000/api/getTaskDetails/$taskId",
       options: Options(
         headers: {"Authorization": "Bearer $token" ,
         "Accept": "application/json"
@@ -86,7 +86,7 @@ final token = prefs.getString('token') ?? '';
  Future<List<ScheduledTask>> getScheduledTasks(String token) async {
 
     final response = await _dio.get(
-      "http://192.168.31.158:8000/api/upComingTasks",
+      "http://192.168.28.158:8000/api/upComingTasks",
       options: Options(
         headers: {"Authorization": "Bearer $token"},
         validateStatus: (status) {

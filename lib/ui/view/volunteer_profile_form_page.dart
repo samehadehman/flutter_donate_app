@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hello/blocs/profile/mini_bloc.dart';
-import 'package:hello/blocs/profile/mini_state.dart';
 import 'package:hello/blocs/volunteerFile/volunteerform_bloc.dart';
+import 'package:hello/blocs/volunteerFile/volunteerform_event.dart';
 import 'package:hello/blocs/volunteerFile/volunteerform_state.dart';
 import 'package:hello/core/color.dart';
-import 'package:hello/services/userProfile_service.dart';
+import 'package:hello/models/createvolunteerpro_model.dart';
 
 
 class VolunteerProfileFormPage extends StatefulWidget {
+
+  
   const VolunteerProfileFormPage({super.key});
 
   @override
@@ -25,6 +26,7 @@ class _VolunteerProfileFormPageState extends State<VolunteerProfileFormPage> {
   final _formKey = GlobalKey<FormState>();
   final List<String> availabilityOptions = ['يوميًا', 'أسبوعيًا'];
   String? selectedAvailability;
+  VolunteerProfileModel? _currentModel;
 
   @override
   void dispose() {
@@ -37,26 +39,33 @@ class _VolunteerProfileFormPageState extends State<VolunteerProfileFormPage> {
   }
 
   int _availabilityTypeId(String? arLabel) {
-    if (arLabel == 'يوميًا') return 1; // Daily
-    if (arLabel == 'أسبوعيًا') return 2; // Weekly
+    if (arLabel == 'يوميًا') return 1;
+    if (arLabel == 'أسبوعيًا') return 2;
     return 0;
   }
 
- Future<void> _submit() async {
+  Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-  String userName = '';
-  final userState = context.read<UserBloc>().state;
-  if (userState is UserLoaded) {
-    userName = userState.user.name;
-  } else {
-    final user = await context.read<UserService>().fetchUserProfile();
-    userName = user.name;
-  }
-    final result = await showDialog<Map<String, String>>(
+
+    // بناء الموديل
+    _currentModel = VolunteerProfileModel(
+      availabilityType: AvailabilityType(
+        id: _availabilityTypeId(selectedAvailability).toString(),
+        availabilityType: selectedAvailability ?? "",
+      ),
+      skills: skillsController.text,
+      availabilityHours: hoursController.text,
+      preferredTasks: interestsController.text,
+      academicMajor: majorController.text,
+      previousVolunteerWork: pastVolunteerController.text,
+    );
+
+    // تأكيد البيانات
+    final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: babygreen,
-        content:  Text(
+        content: Text(
           'هل أنت متأكد من معلوماتك؟',
           textAlign: TextAlign.center,
           style: TextStyle(color: zeti),
@@ -65,37 +74,31 @@ class _VolunteerProfileFormPageState extends State<VolunteerProfileFormPage> {
         actions: [
           TextButton(
             style: TextButton.styleFrom(foregroundColor: zeti),
-            onPressed: () => Navigator.pop(context, null),
-            child: const Text('تعديل' , style: TextStyle( 
-                        fontFamily: 'Zain', ),),
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('تعديل', style: TextStyle(fontFamily: 'Zain')),
           ),
           TextButton(
             style: TextButton.styleFrom(foregroundColor: zeti),
-            onPressed: () {
-              Navigator.pop(context, {
-               "name": userName,
-               "date": DateTime.now().toString().split(" ")[0], 
-                "skills": skillsController.text,
-  "availability": selectedAvailability ?? "",
-  "hours": hoursController.text,
-  "interests": interestsController.text,
-  "major": majorController.text,
-  "pastVolunteer": pastVolunteerController.text,
-              });
-            },
-            child: const Text('نعم' , style: TextStyle( fontWeight: FontWeight.w600,
-                        fontFamily: 'Zain', ),),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text(
+              'نعم',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                fontFamily: 'Zain',
+              ),
+            ),
           ),
         ],
       ),
     );
 
-if (result != null) {
-      // ارجع للصفحة اللي فتحت الفورم ومعاك البيانات
-      Navigator.pop(context, result);
-    }
+    if (confirm != true) return;
+
+    // إرسال الحدث للـ Bloc
+    context.read<VolunteerProfileBloc>().add(
+          CreateVolunteerProfileEvent(_currentModel!),
+        );
   }
-  
 
   @override
   Widget build(BuildContext context) {
@@ -111,8 +114,7 @@ if (result != null) {
                 children: [
                   Container(
                     alignment: Alignment.center,
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                     decoration: BoxDecoration(
                       color: const Color(0X80D9E4D7).withAlpha(85),
                       borderRadius: BorderRadius.circular(90),
@@ -137,8 +139,7 @@ if (result != null) {
                       border: Border.all(color: const Color(0XFFF2F4EC)),
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.arrow_forward_ios,
-                          color: Color(0XFFF2F4EC)),
+                      icon: const Icon(Icons.arrow_forward_ios, color: Color(0XFFF2F4EC)),
                       onPressed: () => Navigator.pop(context),
                     ),
                   ),
@@ -151,11 +152,7 @@ if (result != null) {
             child: Container(
               decoration: BoxDecoration(
                 boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black12,
-                    blurRadius: 10,
-                    offset: Offset(0, -30),
-                  ),
+                  BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -30)),
                 ],
                 color: Colors.white,
                 borderRadius: const BorderRadius.only(
@@ -163,22 +160,13 @@ if (result != null) {
                   topRight: Radius.circular(70),
                 ),
               ),
-              child:
-                  BlocConsumer<VolunteerProfileBloc, VolunteerProfileState>(
-                listener: (context, state)async {
-                  if (state is VolunteerProfileSuccess) {
-                    String userName = '';
-      final userState = context.read<UserBloc>().state;
-      if (userState is UserLoaded) {
-        userName = userState.user.name;
-      } else {
-        // أو مباشرة من UserService لو مش موجود بالـ Bloc
-        final user = await context.read<UserService>().fetchUserProfile();
-        userName = user.name;
-      }
-                    Navigator.pop(context, {
-                      "name": userName,
-                      "date": DateTime.now().toString().split(" ")[0],
+              child: BlocConsumer<VolunteerProfileBloc, VolunteerProfileState>(
+                listener: (context, state) async {
+                  if (state is VolunteerProfileSuccess && _currentModel != null) {
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      if (mounted) {
+                        Navigator.pop(context, _currentModel); // ⬅️ ارجع الموديل
+                      }
                     });
                   } else if (state is VolunteerProfileError) {
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -202,29 +190,23 @@ if (result != null) {
                           const CircleAvatar(
                             radius: 56,
                             backgroundColor: Colors.white,
-                            backgroundImage:
-                                AssetImage('assets/images/logo.png'),
+                            backgroundImage: AssetImage('assets/images/logo.png'),
                           ),
                           const SizedBox(height: 30),
-                          _buildTextField(
-                              "المهارات", skillsController, Icons.star),
+                          _buildTextField("المهارات", skillsController, Icons.star),
                           const SizedBox(height: 16),
                           _buildAvailabilityDropdown(),
                           const SizedBox(height: 16),
                           if (selectedAvailability == 'يوميًا' ||
                               selectedAvailability == 'أسبوعيًا') ...[
-                            _buildTextField("عدد الساعات المتاحة",
-                                hoursController, Icons.timelapse),
+                            _buildTextField("عدد الساعات المتاحة", hoursController, Icons.timelapse),
                             const SizedBox(height: 16),
                           ],
-                          _buildTextField("الأعمال المفضلة",
-                              interestsController, Icons.favorite),
+                          _buildTextField("الأعمال المفضلة", interestsController, Icons.favorite),
                           const SizedBox(height: 16),
-                          _buildTextField("التخصص الأكاديمي",
-                              majorController, Icons.school),
+                          _buildTextField("التخصص الأكاديمي", majorController, Icons.school),
                           const SizedBox(height: 16),
-                          _buildTextField("أعمال تطوعية سابقة",
-                              pastVolunteerController, Icons.history),
+                          _buildTextField("أعمال تطوعية سابقة", pastVolunteerController, Icons.history),
                           const SizedBox(height: 32),
                           ElevatedButton.icon(
                             style: ElevatedButton.styleFrom(
@@ -238,10 +220,7 @@ if (result != null) {
                             icon: const Icon(Icons.check_circle),
                             label: const Text(
                               "تأكيد المعلومات",
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Zain',
-                              ),
+                              style: TextStyle(fontWeight: FontWeight.bold, fontFamily: 'Zain'),
                             ),
                             onPressed: isLoading ? null : _submit,
                           ),
@@ -263,8 +242,7 @@ if (result != null) {
     );
   }
 
-  Widget _buildTextField(
-      String label, TextEditingController controller, IconData icon) {
+  Widget _buildTextField(String label, TextEditingController controller, IconData icon) {
     return TextFormField(
       controller: controller,
       textAlign: TextAlign.right,
@@ -285,8 +263,7 @@ if (result != null) {
       ),
       cursorColor: zeti,
       style: TextStyle(color: zeti),
-      validator: (value) =>
-          (value == null || value.isEmpty) ? 'الرجاء تعبئة هذا الحقل' : null,
+      validator: (value) => (value == null || value.isEmpty) ? 'الرجاء تعبئة هذا الحقل' : null,
     );
   }
 
@@ -294,14 +271,12 @@ if (result != null) {
     return DropdownButtonFormField<String>(
       value: selectedAvailability,
       items: availabilityOptions
-          .map((option) =>
-              DropdownMenuItem(value: option, child: Text(option)))
+          .map((option) => DropdownMenuItem(value: option, child: Text(option)))
           .toList(),
       onChanged: (value) {
         setState(() {
           selectedAvailability = value;
-          if (selectedAvailability != 'يوميًا' &&
-              selectedAvailability != 'أسبوعيًا') {
+          if (selectedAvailability != 'يوميًا' && selectedAvailability != 'أسبوعيًا') {
             hoursController.clear();
           }
         });

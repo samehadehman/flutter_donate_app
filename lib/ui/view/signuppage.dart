@@ -76,7 +76,7 @@ class _SignuppageState extends State<Signuppage> {
               fit: BoxFit.cover,
             ),
             SingleChildScrollView(
-              padding: const EdgeInsets.only(top: 318, right: 25, left: 20),
+              padding: const EdgeInsets.only(top: 340, right: 25, left: 20),
               child: Form(
                 key: _formKey,
                 child: Column(

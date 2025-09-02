@@ -6,7 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   final Dio dio = Dio();
-final String baseUrl = "http://192.168.31.158:8000/api";
+final String baseUrl = "http://192.168.28.158:8000/api";
 
 
   Future<String> register({

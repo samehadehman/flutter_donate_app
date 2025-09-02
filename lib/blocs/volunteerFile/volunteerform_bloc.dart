@@ -9,23 +9,26 @@ import 'package:hello/services/userProfile_service.dart';
 import 'package:hello/services/volunteerProfileForm_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class VolunteerProfileBloc extends Bloc<VolunteerProfileEvent, VolunteerProfileState> {
   final VolunteerService service;
   final UserService userService;
 
-  VolunteerProfileBloc(this.service, this.userService) : super(VolunteerProfileInitial()) {
+  VolunteerProfileBloc(this.service, this.userService)
+      : super(VolunteerProfileInitial()) {
     on<CreateVolunteerProfileEvent>(_onCreateProfile);
     on<GetVolunteerProfileEvent>(_onGetProfile);
     on<LoadUserNameEvent>(_onLoadUserName);
   }
+
 
   Future<void> _onLoadUserName(
       LoadUserNameEvent event, Emitter<VolunteerProfileState> emit) async {
     emit(VolunteerProfileLoading());
     try {
       final user = await userService.fetchUserProfile();
-      emit(VolunteerProfileLoaded(userName: user.name));
+      emit(VolunteerProfileLoaded(
+          VolunteerProfileModel.fromJson({}), // 🔹 dummy فاضي
+          userName: user.name));
     } catch (e) {
       emit(VolunteerProfileError(e.toString()));
     }
@@ -35,36 +38,46 @@ class VolunteerProfileBloc extends Bloc<VolunteerProfileEvent, VolunteerProfileS
       CreateVolunteerProfileEvent event, Emitter<VolunteerProfileState> emit) async {
     emit(VolunteerProfileLoading());
     try {
-    final res = await service.createProfile(event.model.toJson());
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('volunteer_profile', jsonEncode(res.data.toJson()));
-      emit(VolunteerProfileSuccess(res.data)); // ✅ رجع الـ VolunteerProfileModel
-    } catch (e) {
+      print("📤 Sending profile JSON: ${jsonEncode(event.model.toJson())}");
+
+      final res = await service.createProfile(event.model.toJson());
+
+      // هون res.data من نوع VolunteerProfileModel
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(
+          'volunteer_profile_create', jsonEncode(res.data.toJson()));
+
+      emit(VolunteerProfileSuccess(res.data)); // ✅ بيرجع VolunteerProfileModel
+    } catch (e , stackTrace) {
+       print("🚨 VolunteerProfileBloc Create Error: $e");
+    print(stackTrace);
       emit(VolunteerProfileError(e.toString()));
     }
   }
 
+  Future<void> _onGetProfile(
+      GetVolunteerProfileEvent event, Emitter<VolunteerProfileState> emit) async {
+    emit(VolunteerProfileLoading());
+    try {
+      final prefs = await SharedPreferences.getInstance();
 
-Future<void> _onGetProfile(
-    GetVolunteerProfileEvent event, Emitter<VolunteerProfileState> emit) async {
-  emit(VolunteerProfileLoading());
-  try {
-    final prefs = await SharedPreferences.getInstance();
+      // ✅ أول شي حاول تجيب نسخة محلية من العرض (VolunteerProfileView)
+      final cached = prefs.getString('volunteer_profile_view');
+      if (cached != null) {
+        final data = VolunteerProfileView.fromJson(jsonDecode(cached));
+        emit(VolunteerProfileViewSuccess(data));
+      }
 
-    // ✅ أول شي حاول تجيب نسخة محلية
-    final cached = prefs.getString('volunteer_profile');
-    if (cached != null) {
-        final data = VolunteerProfileModel.fromJson(jsonDecode(cached));
-      emit(VolunteerProfileViewSuccess(data as VolunteerProfileView));
+      // ✅ بعدين جب نسخة محدثة من السيرفر
+      final res = await service.getProfile();
+      await prefs.setString(
+          'volunteer_profile_view', jsonEncode(res.data.toJson()));
+
+      emit(VolunteerProfileViewSuccess(res.data)); // ✅ بيرجع VolunteerProfileView
+    } catch (e , stackTrace) {
+       print("🚨 VolunteerProfileBloc Geet Error: $e");
+    print(stackTrace);
+      emit(VolunteerProfileError(e.toString()));
     }
-
-    // ✅ بعدين جب نسخة محدثة من السيرفر
-    final res = await service.getProfile();
-    await prefs.setString('volunteer_profile', jsonEncode(res.data.toJson()));
-
-    emit(VolunteerProfileViewSuccess(res.data));
-  } catch (e) {
-    emit(VolunteerProfileError(e.toString()));
   }
-}
 }

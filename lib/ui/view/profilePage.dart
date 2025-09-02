@@ -18,10 +18,14 @@ import 'package:hello/blocs/profile/mini_state.dart';
 import 'package:hello/blocs/userinfo/userinfo_bloc.dart';
 import 'package:hello/blocs/userinfo/userinfo_event.dart';
 import 'package:hello/blocs/userinfo/userinfo_state.dart';
+import 'package:hello/blocs/volunteerFile/volunteerform_bloc.dart';
+import 'package:hello/blocs/volunteerFile/volunteerform_event.dart';
+import 'package:hello/blocs/volunteerFile/volunteerform_state.dart';
 import 'package:hello/blocs/wallet/wallet_bloc.dart';
 import 'package:hello/blocs/wallet/wallet_event.dart';
 import 'package:hello/core/color.dart';
 import 'package:hello/models/achievementSummary.dart';
+import 'package:hello/models/createvolunteerpro_model.dart';
 import 'package:hello/services/mostDonationFor_service.dart';
 import 'package:hello/services/mydonation_service.dart';
 import 'package:hello/services/myvolounting_service.dart';
@@ -40,19 +44,19 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Map<String, String>? volunteerData;
+  // Map<String, String>? volunteerData;
   Map<String, String>? walletData;
   int _currentTabIndex = 0;
 
-  void createDummyWallet() {
-    setState(() {
-      walletData = {
-        'amount': '3,000',
-        'createdAt': '2025-08-01',
-        'walletId': '#WLT123456',
-      };
-    });
-  }
+  // void createDummyWallet() {
+  //   setState(() {
+  //     walletData = {
+  //       'amount': '3,000',
+  //       'createdAt': '2025-08-01',
+  //       'walletId': '#WLT123456',
+  //     };
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -158,6 +162,7 @@ onPressed: () => Navigator.pop(context),
                                   SizedBox(height: 16),
                                   CircleAvatar(
                                     radius: 55,
+                                    //Color.fromARGB(255, 252, 248, 241)
                                     backgroundColor: white,
                                     backgroundImage: NetworkImage(user.avatarUrl),
                                   ),
@@ -194,12 +199,6 @@ onPressed: () => Navigator.pop(context),
                                       children: [
                                        buildVolunteerTab(
   context,
-  volunteerData,
-  (newData) {
-    setState(() {
-      volunteerData = newData; 
-    });
-  },
 ),
 
                                         buildAchievementsTab(context),
@@ -229,149 +228,307 @@ onPressed: () => Navigator.pop(context),
     );
   }
 }
-Widget buildVolunteerTab(
-  BuildContext context,
-  Map<String, String>? data,
-  Function(Map<String, String>) onCreateFile,
-) {
-  if (data == null) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            'ليس لديك ملف تطوع بعد، بادر بإنشاء ملفك الآن',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              color: Colors.black54,
-              fontSize: 16,
-              fontFamily: 'Zain',
-            ),
-          ),
-          const SizedBox(height: 12),
-          IconButton(
-            icon: const Icon(
-              Icons.drive_file_move,
-              size: 32,
-              color: Colors.black54,
-            ),
-            onPressed: () async {
-             final result = await Navigator.push<Map<String, String>>(
-  context,
-  MaterialPageRoute(
-    builder: (context) => VolunteerProfileFormPage(),
-  ),
-);
 
 
-              if (result != null) {
-                print('Received profile data: $result');
-                onCreateFile(result); // ✅ مرر البيانات للـ ProfilePage
-              }
-            },
-          ),
-        ],
-      ),
-    );
-  } else {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            InkWell(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => VolunteerProfileDetailsPage(data: data),
-                  ),
-                );
-                
-              },
-              child: Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: medium_Green.withOpacity(0.25),
-                      blurRadius: 10,
-                      offset: const Offset(0, 5),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 8,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            medium_Green.withOpacity(0.8),
-                            medium_Green.withOpacity(0.4),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
+Widget buildVolunteerTab(BuildContext context) {
+  return BlocBuilder<VolunteerProfileBloc, VolunteerProfileState>(
+    builder: (context, state) {
+      if (state is VolunteerProfileViewSuccess) {
+        final data = state.profile; // من نوع VolunteerProfileView
+        return SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => VolunteerProfileDetailsPage(
+                          
                         ),
-                        borderRadius: BorderRadius.circular(4),
                       ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: medium_Green.withOpacity(0.25),
+                          blurRadius: 10,
+                          offset: const Offset(0, 5),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 8,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                medium_Green.withOpacity(0.8),
+                                medium_Green.withOpacity(0.4),
+                              ],
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                            ),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(
-                                Icons.volunteer_activism,
-                                color: Colors.black54,
-                                size: 20,
-                              ),
-                              const SizedBox(width: 6),
-                              Flexible(
-                                child: Text(
-                                  data['name'] ?? '',
-                                  textAlign: TextAlign.right,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                    fontFamily: 'Zain',
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  const Icon(
+                                    Icons.volunteer_activism,
+                                    color: Colors.black54,
+                                    size: 20,
                                   ),
+                                  const SizedBox(width: 6),
+                                  Flexible(
+                                    child: Text(
+                                      state.profile.volunteerName,
+                                      textAlign: TextAlign.right,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                        fontFamily: 'Zain',
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                'تاريخ التطوع: ${data.timeBecomingVolunteerMember}',
+                                textAlign: TextAlign.right,
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.black54,
+                                  fontFamily: 'Zain',
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 6),
-                          Text(
-                            'تاريخ التطوع: ${data['date'] ?? ''}',
-                            textAlign: TextAlign.right,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
-                              fontFamily: 'Zain',
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      } else if (state is VolunteerProfileInitial ||
+          state is VolunteerProfileError) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text(
+                'ليس لديك ملف تطوع بعد، بادر بإنشاء ملفك الآن',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Colors.black54,
+                  fontSize: 16,
+                  fontFamily: 'Zain',
                 ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
+              const SizedBox(height: 12),
+              IconButton(
+                icon: const Icon(
+                  Icons.drive_file_move,
+                  size: 32,
+                  color: Colors.black54,
+                ),
+             onPressed: () async {
+  final result = await Navigator.push<VolunteerProfileModel>(
+    context,
+    MaterialPageRoute(
+      builder: (context) => VolunteerProfileFormPage(),
+    ),
+  );
+
+  if (result != null) {
+    // 1) أنشئ الملف
+    context.read<VolunteerProfileBloc>().add(CreateVolunteerProfileEvent(result));
+
+    // 2) بعد النجاح، رجّع جيب الملف المحدث
+    context.read<VolunteerProfileBloc>().add(GetVolunteerProfileEvent());
   }
+},
+              ),
+            ],
+          ),
+        );
+      } else if (state is VolunteerProfileLoading) {
+        return const Center(child: CircularProgressIndicator());
+      } else {
+        return const SizedBox.shrink();
+      }
+    },
+  );
 }
+
+// Widget buildVolunteerTab(
+//   BuildContext context,
+//   Map<String, String>? data,
+//   Function(Map<String, String>) onCreateFile,
+// ) {
+//   if (data == null) {
+//     return Center(
+//       child: Column(
+//         mainAxisAlignment: MainAxisAlignment.center,
+//         children: [
+//           const Text(
+//             'ليس لديك ملف تطوع بعد، بادر بإنشاء ملفك الآن',
+//             textAlign: TextAlign.center,
+//             style: TextStyle(
+//               color: Colors.black54,
+//               fontSize: 16,
+//               fontFamily: 'Zain',
+//             ),
+//           ),
+//           const SizedBox(height: 12),
+//           IconButton(
+//             icon: const Icon(
+//               Icons.drive_file_move,
+//               size: 32,
+//               color: Colors.black54,
+//             ),
+//             onPressed: () async {
+//              final result = await Navigator.push<Map<String, String>>(
+//   context,
+//   MaterialPageRoute(
+//     builder: (context) => VolunteerProfileFormPage(),
+//   ),
+// );
+
+
+//               if (result != null) {
+//                 print('Received profile data: $result');
+//                 onCreateFile(result); // ✅ مرر البيانات للـ ProfilePage
+//               }
+//               else {
+//     print('User canceled the profile creation');
+//   }
+//             },
+//           ),
+//         ],
+//       ),
+//     );
+//   } else {
+//     return SingleChildScrollView(
+//       child: Padding(
+//         padding: const EdgeInsets.all(16.0),
+//         child: Column(
+//           crossAxisAlignment: CrossAxisAlignment.stretch,
+//           children: [
+//             InkWell(
+//               onTap: () {
+//                 Navigator.push(
+//                   context,
+//                   MaterialPageRoute(
+//                     builder: (_) => VolunteerProfileDetailsPage(data: data),
+//                   ),
+//                 );
+                
+//               },
+//               child: Container(
+//                 padding: const EdgeInsets.all(16),
+//                 decoration: BoxDecoration(
+//                   color: Colors.white,
+//                   borderRadius: BorderRadius.circular(16),
+//                   boxShadow: [
+//                     BoxShadow(
+//                       color: medium_Green.withOpacity(0.25),
+//                       blurRadius: 10,
+//                       offset: const Offset(0, 5),
+//                     ),
+//                   ],
+//                 ),
+//                 child: Row(
+//                   children: [
+//                     Container(
+//                       width: 8,
+//                       height: 60,
+//                       decoration: BoxDecoration(
+//                         gradient: LinearGradient(
+//                           colors: [
+//                             medium_Green.withOpacity(0.8),
+//                             medium_Green.withOpacity(0.4),
+//                           ],
+//                           begin: Alignment.topCenter,
+//                           end: Alignment.bottomCenter,
+//                         ),
+//                         borderRadius: BorderRadius.circular(4),
+//                       ),
+//                     ),
+//                     const SizedBox(width: 12),
+//                     Expanded(
+//                       child: Column(
+//                         crossAxisAlignment: CrossAxisAlignment.end,
+//                         mainAxisSize: MainAxisSize.min,
+//                         children: [
+//                           Row(
+//                             mainAxisAlignment: MainAxisAlignment.end,
+//                             children: [
+//                               const Icon(
+//                                 Icons.volunteer_activism,
+//                                 color: Colors.black54,
+//                                 size: 20,
+//                               ),
+//                               const SizedBox(width: 6),
+//                               Flexible(
+//                                 child: Text(
+//                                   data['name'] ?? '',
+//                                   textAlign: TextAlign.right,
+//                                   style: const TextStyle(
+//                                     fontSize: 18,
+//                                     fontWeight: FontWeight.bold,
+//                                     color: Colors.black87,
+//                                     fontFamily: 'Zain',
+//                                   ),
+//                                 ),
+//                               ),
+//                             ],
+//                           ),
+//                           const SizedBox(height: 6),
+//                           Text(
+//                             'تاريخ التطوع: ${data['date'] ?? ''}',
+//                             textAlign: TextAlign.right,
+//                             style: const TextStyle(
+//                               fontSize: 14,
+//                               color: Colors.black54,
+//                               fontFamily: 'Zain',
+//                             ),
+//                           ),
+//                         ],
+//                       ),
+//                     ),
+//                   ],
+//                 ),
+//               ),
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 Widget buildWalletTab(
   BuildContext context,

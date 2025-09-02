@@ -4,7 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 class WalletService {
   final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.31.158:8000/api',
+    baseUrl: 'http://192.168.28.158:8000/api',
     headers: {'Accept': 'application/json'},
   ));
 

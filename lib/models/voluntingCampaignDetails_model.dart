@@ -32,7 +32,7 @@ class CampaignDetailsModel {
     if (rawPhoto.startsWith('http://localhost')) {
       rawPhoto = rawPhoto.replaceFirst(
         'http://localhost',
-        'http://192.168.31.158', // ضع IP جهاز السيرفر
+        'http://192.168.28.158', // ضع IP جهاز السيرفر
       );
     }
 

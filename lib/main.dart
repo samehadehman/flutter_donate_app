@@ -1,4 +1,4 @@
-import 'package:dio/src/dio.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hello/blocs/forgetpass/forget_bloc.dart';
@@ -8,6 +8,8 @@ import 'package:hello/blocs/userinfo/userinfo_bloc.dart';
 import 'package:hello/blocs/userinfo/userinfo_event.dart';
 import 'package:hello/blocs/volunteerFile/volunteerform_bloc.dart';
 import 'package:hello/blocs/volunteerFile/volunteerform_event.dart';
+import 'package:hello/blocs/volunteerFile/volunteerprodetail_bloc.dart';
+import 'package:hello/blocs/volunteerFile/volunteerprodetail_event.dart';
 import 'package:hello/blocs/voluntingCamp/scheduledTasks_bloc.dart';
 import 'package:hello/blocs/voluntingCamp/scheduledTasks_event.dart';
 import 'package:hello/blocs/wallet/wallet_bloc.dart';
@@ -56,12 +58,18 @@ BlocProvider<ForgotPasswordBloc>(
       BlocProvider<VerifyCodeBloc>(
       create: (context) => VerifyCodeBloc(),
     ),
-   BlocProvider(
+    BlocProvider(
   create: (_) => VolunteerProfileBloc(
     VolunteerService(dio),
     UserService(dio: dio),
   )..add(GetVolunteerProfileEvent()), // ✅ هاد السطر بجيب الملف من السيرفر أول ما يشتغل
 ),
+
+BlocProvider(
+  create: (_) => VolunteerProfileDetailBloc(VolunteerService(dio))
+    ..add(FetchVolunteerDetailProfile()), // ✅ أول ما يشتغل يجيب الداتا
+),
+
         BlocProvider<UserInfoBloc>(
           create: (_) => UserInfoBloc(UserInfoService())..add(FetchUserInfo()),
         ),
@@ -80,7 +88,7 @@ BlocProvider<ForgotPasswordBloc>(
       child: MaterialApp(
     
         debugShowCheckedModeBanner: false,
-        initialRoute: '/loginpage',
+        initialRoute: '/signuppage',
         routes: {
           '/loginpage': (context) => LoginPage(),
          '/signuppage': (context) => Signuppage(),

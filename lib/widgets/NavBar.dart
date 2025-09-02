@@ -46,7 +46,7 @@ class BottomNavBar extends StatelessWidget {
     else if (index == 1) {
       Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage()));
     } else if (index == 2) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => VolunteerProfileDetailsPage(data: {},)));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => VolunteerProfileDetailsPage()));
     } else if (index == 3) {
       Navigator.push(context, MaterialPageRoute(builder: (_) => AboutPage()));
     }

@@ -599,48 +599,76 @@ Widget buildEmergencyCard({
                         softWrap: true, 
                       ),
                           SizedBox(height: 4),
-          Text(
-        type,
-        style: TextStyle(
-          fontSize: 15,
-          color: Colors.white70,
-          fontWeight: FontWeight.w400,
-          fontFamily: 'Zain',
-        ),
-            ),
+        //   Text(
+        // type,
+        // style: TextStyle(
+        //   fontSize: 15,
+        //   color: Colors.white70,
+        //   fontWeight: FontWeight.w400,
+        //   fontFamily: 'Zain',
+        // ),
+        //     ),
                 ],
                   ),
-                
-                  subtitle: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Icon(Icons.location_on, color: Color(0xFFb3beb0), size: 16),
-                      Text(
-                        location,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0XFFF2F4EC),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Zain',
-                        ),
-                         maxLines: null, 
-                        overflow: TextOverflow.ellipsis, 
-                        softWrap: true,
-                      ),
-                      const SizedBox(width: 25),
-                      Icon(Icons.money, color: Color(0xFFb3beb0), size: 16),
-                      const SizedBox(width: 5),
-                      Text(
-                        money.toString(),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Color(0XFFF2F4EC),
-                          fontWeight: FontWeight.w400,
-                          fontFamily: 'Zain',
-                        ),
-                      ),
-                    ],
+                subtitle: Row(
+  crossAxisAlignment: CrossAxisAlignment.start,
+  children: [
+    Expanded(
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8.0, right: 8.0), 
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              type,
+              style: TextStyle(
+                fontSize: 15,
+                color: Colors.white70,
+                fontWeight: FontWeight.w400,
+                fontFamily: 'Zain',
+              ),
+              overflow: TextOverflow.ellipsis,
+              maxLines: 1,
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(Icons.location_on, color: Color(0xFFb3beb0), size: 16),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    location,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Color(0XFFF2F4EC),
+                      fontWeight: FontWeight.w400,
+                      fontFamily: 'Zain',
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
+                ),
+                const SizedBox(width: 15),
+                Icon(Icons.money, color: Color(0xFFb3beb0), size: 16),
+                const SizedBox(width: 5),
+                Text(
+                  money.toString(),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Color(0XFFF2F4EC),
+                    fontWeight: FontWeight.w400,
+                    fontFamily: 'Zain',
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    ),
+  ],
+),
+
                   trailing: Container(
                     height: 40,
                     width: 80,

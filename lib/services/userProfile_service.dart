@@ -12,7 +12,7 @@ class UserService {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
       final response = await dio.get(
-        'http://192.168.31.158:8000/api/miniIfo',
+        'http://192.168.28.158:8000/api/miniIfo',
 
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );

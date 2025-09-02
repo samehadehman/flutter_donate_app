@@ -39,7 +39,7 @@ class VolunteerProfileModel {
     return VolunteerProfileModel(
       availabilityType: AvailabilityType.fromJson(json['availability_type_id']),
       skills: json['skills'],
-      availabilityHours: json['availability_hours'],
+      availabilityHours: json['availability_hours'].toString(),
       preferredTasks: json['preferred_tasks'],
       academicMajor: json['academic_major'],
       previousVolunteerWork: json['previous_volunteer_work'],
@@ -47,12 +47,12 @@ class VolunteerProfileModel {
   }
     Map<String, dynamic> toJson() {
     return {
-      "availability_type_id": availabilityType.id,
-      "skills": skills,
-      "availability_hours": availabilityHours,
-      "preferred_tasks": preferredTasks,
-      "academic_major": academicMajor,
-      "previous_volunteer_work": previousVolunteerWork,
+    "availability_type_id": int.parse(availabilityType.id), // 👈 رقم فقط
+      "skills": skills.trim(),
+      "availability_hours": availabilityHours.trim(),
+      "preferred_tasks": preferredTasks.trim(),
+      "academic_major": academicMajor.trim(),
+      "previous_volunteer_work": previousVolunteerWork.trim(),
     };
   }
 }
@@ -68,8 +68,10 @@ class AvailabilityType {
 
   factory AvailabilityType.fromJson(Map<String, dynamic> json) {
     return AvailabilityType(
-      id: json['id'],
+      id: json['id'].toString(),
       availabilityType: json['availability_type'],
     );
   }
+
+
 }

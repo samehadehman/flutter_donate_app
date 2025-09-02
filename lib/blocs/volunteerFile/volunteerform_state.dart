@@ -1,4 +1,3 @@
-import 'package:equatable/equatable.dart';
 import 'package:hello/models/createvolunteerpro_model.dart';
 import 'package:hello/models/showVolunteerpro_model.dart';
 
@@ -21,7 +20,7 @@ class VolunteerProfileViewSuccess extends VolunteerProfileState {
 
 class VolunteerProfileLoaded extends VolunteerProfileState {
   final String userName;
-  VolunteerProfileLoaded({required this.userName});
+  VolunteerProfileLoaded(VolunteerProfileModel data, {required this.userName});
 }
 
 class VolunteerProfileError extends VolunteerProfileState {
