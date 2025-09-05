@@ -11,7 +11,8 @@ import 'package:hello/widgets/elevatedButton.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 
 class VerificationPage extends StatefulWidget {
-  
+    static const String id = '/ver';   
+
   final String email;
   const VerificationPage({super.key, required this.email});
 
@@ -115,14 +116,13 @@ class _VerificationPageState extends State<VerificationPage> {
                   BlocConsumer<VerifyCodeBloc, VerifyCodeState>(
                     listener: (context, state) {
                       if (state is VerifyCodeSuccess) {
-                        Navigator.pushReplacement(
+                        Navigator.pushReplacementNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) => ResetPasswordPage(
-                              code: state.code,
-                              email: widget.email,
-                            ),
-                          ),
+                         ResetPasswordPage.id, // id الصفحة الهدف
+  arguments: {
+    'code': state.code,
+    'email': widget.email,
+  },
                         );
                       } else if (state is VerifyCodeFailure) {
                         ScaffoldMessenger.of(context).showSnackBar(

@@ -8,7 +8,8 @@ import 'package:hello/ui/view/loginpage.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class Signuppage extends StatefulWidget {
-  
+    static  String id = '/sign';   // بدل forget2
+
   const Signuppage({super.key});
 
   @override
@@ -55,9 +56,9 @@ class _SignuppageState extends State<Signuppage> {
         listener: (context, state) {
           if (state is AuthSuccess) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              Navigator.pushReplacement(
+              Navigator.pushReplacementNamed(
                 context,
-                MaterialPageRoute(builder: (_) =>  HomePage()),
+               HomePage.id,
               );
             });
           } else if (state is AuthFailure) {
@@ -270,9 +271,9 @@ class _SignuppageState extends State<Signuppage> {
                       children: [
                         TextButton(
                           onPressed: () {
-Navigator.pushReplacement(
+Navigator.pushReplacementNamed(
   context,
-  MaterialPageRoute(builder: (_) => LoginPage()),
+   LoginPage.id,
 );
                           },
                           child: Text(

@@ -185,8 +185,16 @@ class VolunteerCampaignsPage extends StatelessWidget {
                                     );
                                   } else if (state is ScheduledTasksError) {
                                     return Center(
-                                      child: Text('حدث خطأ: ${state.message}'),
-                                    );
+ child: Text(
+      '⚠️ تعذر جلب المهام,ليس لديك ملف تطوعي بعد ولم تتطوع بمهام',
+      style: TextStyle(
+        color: zeti,
+        fontSize: 16,
+        fontWeight: FontWeight.bold,
+        fontFamily: 'Zain',
+      ),
+      textAlign: TextAlign.center,
+    ),                                    );
                                   } else if (state is NoVolunteerProfile) {
                                     return Center(
                                       child: Text(
@@ -334,13 +342,14 @@ return ListView.builder(
             category: c.classificationName,
             tasksCount: c.numberOfTasks.toString(),
             onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder:
-                      (context) => DetailsAssociationcamps(campaignId: c.id),
-                ),
-              );
+             Navigator.pushNamed(
+  context,
+  DetailsAssociationcamps.id,
+  arguments: {
+    'campaignId': c.id,
+  },
+);
+
             },
           );
         },

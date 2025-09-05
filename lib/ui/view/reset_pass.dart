@@ -10,7 +10,8 @@ import 'package:hello/widgets/elevatedButton.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ResetPasswordPage extends StatefulWidget {
-  
+    static  String id = '/resetpassword';   // بدل forget2
+
   final String code;
   final String email;
 
@@ -77,9 +78,9 @@ class _ResetPasswordPageState extends State<ResetPasswordPage> {
           await prefs.setString("auth_token", state.token);
 
           // رجّع المستخدم على صفحة تسجيل الدخول
-          Navigator.pushAndRemoveUntil(
+          Navigator.pushNamedAndRemoveUntil(
             context,
-            MaterialPageRoute(builder: (_) => const LoginPage()),
+            LoginPage.id,
             (route) => false,
           );
         } else if (state is ResetPasswordFailure) {

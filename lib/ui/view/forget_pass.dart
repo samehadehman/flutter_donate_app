@@ -8,6 +8,9 @@ import 'package:hello/ui/view/verification.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class ForgotPasswordPage extends StatelessWidget {
+
+    static String id = '/forgetpassword';   
+
   ForgotPasswordPage({super.key});
 
   final TextEditingController emailController = TextEditingController();
@@ -74,13 +77,13 @@ class ForgotPasswordPage extends StatelessWidget {
                         }
                 
                         if (state is ForgotPasswordSuccess) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  VerificationPage(email: state.email),
-                            ),
-                          );
+                          Navigator.pushNamed(
+  context,
+  VerificationPage.id, // الـ id الخاص بالصفحة
+  arguments: {
+    'email': state.email, // تمرير البيانات
+  },
+);
                         }
                       },
                       builder: (context, state) {

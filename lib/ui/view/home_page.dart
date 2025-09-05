@@ -117,7 +117,7 @@ class SimpleSearchDelegate extends SearchDelegate<String> {
 // ========== Home Page ==========
 
 class HomePage extends StatelessWidget {
-    static String id = "home";
+    static String id = "/home";
 
   HomePage({super.key,});
 

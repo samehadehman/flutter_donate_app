@@ -30,6 +30,7 @@ import 'package:hello/services/auth.dart';
 import 'package:hello/ui/view/home_page.dart';
 import 'package:hello/ui/view/loginpage.dart';
 import 'package:hello/ui/view/signuppage.dart';
+import 'package:hello/ui/view/volunteerCompaign_detail_oage.dart';
 import 'package:hello/ui/view/volunteer_page.dart';
 import 'blocs/auth/auth_bloc.dart';
 
@@ -97,28 +98,54 @@ BlocProvider(
       child: MaterialApp(
     
         debugShowCheckedModeBanner: false,
-        initialRoute: '/loginpage',
-        routes: {
-          '/loginpage': (context) => LoginPage(),
-         '/signuppage': (context) => Signuppage(),
-          '/home': (context) => HomePage(),
-          '/forget1': (context) => ForgotPasswordPage(),
-          '/forget2': (context) {
-  final args = ModalRoute.of(context)!.settings.arguments as Map;
-  return ResetPasswordPage(code: args['code'], email: args['email']);
-},
-'/forget3': (context) {
-  final args = ModalRoute.of(context)!.settings.arguments as Map;
-  return VerificationPage(email: args['email']);
-},
+//         initialRoute: '/loginpage',
+       routes: {
+//           '/loginpage': (context) => LoginPage(),
+//          '/signuppage': (context) => Signuppage(),
+//           '/home': (context) => HomePage(),
+//           '/forget1': (context) => ForgotPasswordPage(),
+//           '/forget2': (context) {
+//   final args = ModalRoute.of(context)!.settings.arguments as Map;
+//   return ResetPasswordPage(code: args['code'], email: args['email']);
+// },
+// '/forget3': (context) {
+//   final args = ModalRoute.of(context)!.settings.arguments as Map;
+//   return VerificationPage(email: args['email']);
+// },
  
-          '/caseform': (context) => CaseFormPage(),
-       //    '/volunteerform': (context) => VolunteerProfileFormPage(data: {},),
-       //   '/volunteerdetail': (context) => VolunteerProfileDetailsPage(data: {},),
-        },
+//           '/caseform': (context) => CaseFormPage(),
+//        //    '/volunteerform': (context) => VolunteerProfileFormPage(data: {},),
+//        //   '/volunteerdetail': (context) => VolunteerProfileDetailsPage(data: {},),
+//         },
+
+
+          Signuppage.id: (context) => Signuppage(),
+          LoginPage.id: (context) => LoginPage(),
+          HomePage.id: (context) => HomePage(),
+    ForgotPasswordPage.id: (context) => ForgotPasswordPage(),
+ ResetPasswordPage.id: (context) {
+      final args = ModalRoute.of(context)!.settings.arguments as Map;
+      return ResetPasswordPage(
+        code: args['code'],
+        email: args['email'],
+      );
+    },
+    VerificationPage.id: (context) {
+      final args = ModalRoute.of(context)!.settings.arguments as Map;
+      return VerificationPage(
+        email: args['email'],
+      );
+    },
+    VolunteerCampaignsPage.id: (context)=> VolunteerCampaignsPage(),
+DetailsAssociationcamps.id: (context) {
+  final args = ModalRoute.of(context)!.settings.arguments as Map;
+  return DetailsAssociationcamps(campaignId: args['campaignId']);
+},
+       },
+    home: HomePage(),
+      ),
 
       
-      ),
     );
   }
 }

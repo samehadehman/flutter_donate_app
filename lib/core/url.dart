@@ -1,3 +1,3 @@
 class Url {
-  static String url = 'http://192.168.245.158:8000/api';
+  static String url = 'http://192.168.1.106:8000/api';
 }

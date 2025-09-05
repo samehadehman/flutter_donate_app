@@ -4,10 +4,11 @@ import 'package:hello/blocs/auth/auth_bloc.dart';
 import 'package:hello/core/color.dart';
 import 'package:hello/ui/view/forget_pass.dart';
 import 'package:hello/ui/view/home_page.dart';
+import 'package:hello/ui/view/signuppage.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class LoginPage extends StatefulWidget {
-  static String id = "log";
+  static String id = "/log";
 
   const LoginPage({super.key});
 
@@ -46,9 +47,9 @@ class _LoginPageState extends State<LoginPage> {
           if (state is AuthLoading) {
             // ممكن نضيف Dialog تحميل هون إذا بدك
           } else if (state is AuthSuccess) {
-            Navigator.pushReplacement(
+            Navigator.pushReplacementNamed(
               context,
-              MaterialPageRoute(builder: (_) =>  HomePage()),
+             HomePage.id,
             );
           } else if (state is AuthFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -155,11 +156,11 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     TextButton(
                       onPressed: () {
-                        Navigator.push(
+                        Navigator.pushNamed(
                           context,
-                          MaterialPageRoute(
-                            builder: (_) =>  ForgotPasswordPage(),
-                          ),
+                        
+                         ForgotPasswordPage.id,
+                       
                         );
                       },
                       child: Align(
@@ -194,7 +195,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pushNamed('/signuppage');
+                            Navigator.of(context).pushNamed(Signuppage.id);
                           },
                           child: Text(
                             "سجل الآن",
