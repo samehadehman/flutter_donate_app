@@ -1,18 +1,21 @@
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {
-  final Dio dio;
+    final String baseUrl = Url.url;
+      final dio = Dio();
 
-  UserService({required this.dio});
+
 
   Future<UserModel> fetchUserProfile() async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';
       final response = await dio.get(
-        'http://192.168.28.158:8000/api/miniIfo',
+                '$baseUrl/miniIfo',
+
 
         options: Options(headers: {'Authorization': 'Bearer $token'}),
       );

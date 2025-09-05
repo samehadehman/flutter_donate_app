@@ -1,10 +1,9 @@
-// services/search_service.dart
 import 'package:dio/dio.dart';
 import 'package:hello/models/search.dart';
 
 class SearchService {
   final Dio _dio = Dio();
-  final String baseUrl = "http://192.168.55.158:8000/api/searchCampaigns";
+  final String baseUrl = "http://192.168.123.158:8000/api/searchCampaigns";
 
   Future<List<Campaign>> searchCampaigns(String classification, String token) async {
     try {

@@ -32,7 +32,7 @@ class CampaignDetailsModel {
     if (rawPhoto.startsWith('http://localhost')) {
       rawPhoto = rawPhoto.replaceFirst(
         'http://localhost',
-        'http://192.168.28.158', // ضع IP جهاز السيرفر
+        'http://192.168.173.158', // ضع IP جهاز السيرفر
       );
     }
 
@@ -57,7 +57,7 @@ class CampaignDetailsModel {
 }
 
 class Task {
-    final int id; // جديد
+  final int id; 
 
   final String taskName;
   final String description;
@@ -75,7 +75,7 @@ Task({
   });
   factory Task.fromJson(Map<String, dynamic> json) {
     return Task(
-            id: json['id'] ?? 0,
+            id: json['id'] ?? json['task_id'] ?? 0,
 
       taskName: json['task_name']?.toString() ?? 'بدون اسم',
       description: json['description']?.toString() ?? 'لا يوجد وصف',

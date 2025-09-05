@@ -158,7 +158,7 @@ class GlobalDonationFab extends StatelessWidget {
                           ),
                         ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: medium_Green,
+                          backgroundColor: Color(0xFFb3beb0),
                           foregroundColor: Colors.white,
                           minimumSize: Size(double.infinity, 50),
                           shape: RoundedRectangleBorder(

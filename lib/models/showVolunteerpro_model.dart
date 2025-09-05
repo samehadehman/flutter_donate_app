@@ -29,8 +29,8 @@ class VolunteerProfileView {
 
   factory VolunteerProfileView.fromJson(Map<String, dynamic> json) {
     return VolunteerProfileView(
-      volunteerName: json['volunteer_name'],
-      timeBecomingVolunteerMember: json['time_becoming_volunteer_member'],
+ volunteerName: json['volunteer_name']?.toString() ?? '',
+    timeBecomingVolunteerMember: json['time_becoming_volunteer_member']?.toString() ?? '',
     );
 
 

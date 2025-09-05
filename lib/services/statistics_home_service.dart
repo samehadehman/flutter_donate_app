@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/countAssociation_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class StatisticsService {
-  final String baseUrl = 'http://192.168.28.158:8000/api';
+    final String baseUrl = Url.url;
+
+  // final String baseUrl = 'http://192.168.137.134:8000/api';
   final Dio dio = Dio();
 
   Future<AssociationCountModel?> getAssociationCount(String token) async {
@@ -40,7 +43,9 @@ class StatisticsService {
 
 
 class InKindService {
-  final String baseUrl = 'http://192.168.28.158:8000/api';
+    final String baseUrl = Url.url;
+
+  // final String baseUrl = 'http://192.168.137.134:8000/api';
   final Dio dio = Dio();
 
   Future<TotalInkindDonation?> gettotalInkindDonations(String token) async {
@@ -74,7 +79,7 @@ class InKindService {
 }
 
 class DonationService {
-  final String baseUrl = 'http://192.168.28.158:8000/api';
+  final String baseUrl = Url.url;
   final Dio dio = Dio();
 
   Future<DonationTotalModel?> getDonationTotal(String token) async {
@@ -108,7 +113,7 @@ class DonationService {
 }
 
 class EndedCampaignsService {
-  final String baseUrl = 'http://192.168.28.158:8000/api';
+  final String baseUrl = Url.url;
   final Dio dio = Dio();
   Future<EndedCampaignsModel?> getEndedCampaigns(String token) async {
     try {

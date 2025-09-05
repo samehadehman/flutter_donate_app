@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/userInfo.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserInfoService {
   final Dio dio = Dio();
-  final String baseUrl = "http://192.168.28.158:8000/api";
+  final String baseUrl = Url.url;
 
   Future<UserInfo> getUserInfo(String token) async {
     final prefs = await SharedPreferences.getInstance();

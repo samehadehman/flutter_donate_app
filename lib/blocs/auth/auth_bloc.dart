@@ -12,6 +12,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   AuthBloc({required this.authService}) : super(AuthInitial()) {
     on<RegisterRequested>(_onRegister);
     on<LoginRequested>(_onLogin);
+        on<LogoutRequested>(_onLogout); // ✅ جديد
+
   }
 
   Future<void> _onRegister(
@@ -61,7 +63,29 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(AuthFailure(msg));
     }
   }
+Future<void> _onLogout(LogoutRequested event, Emitter<AuthState> emit) async {
+      print("🔹 بدأ تسجيل الخروج");
 
+    emit(AuthLoading());
+
+    try {
+      // ✅ استدعاء API تبع تسجيل الخروج
+      final message = await authService.logout();
+      print("🔹 استجابة الخادم عند تسجيل الخروج: $message");
+
+      // ✅ مسح التوكن من التخزين
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('token');
+      print("🔹 تم إزالة التوكن من SharedPreferences");
+
+      emit(AuthLoggedOut()); // نجاح
+    } catch (e) {
+            print("🔴 حدث خطأ أثناء تسجيل الخروج: $e");
+
+      final msg = _parseError(e.toString());
+      emit(AuthFailure(msg));
+    }
+  }
   String _parseError(String error) {
     if (error.contains("422") && error.contains("email")) {
       return "هذا الحساب موجود مسبقاً.";
@@ -73,12 +97,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       return '------------------------------------------------';
     }
     
-    // else if (error.contains("timeout")) {
-    //   return "انتهت المهلة، تحقق من الاتصال.";
-    // } else if (error.contains("SocketException")) {
-    //   return "لا يوجد اتصال بالخادم.";
-    // } else {
-    //   return "حدث خطأ ما، حاول مرة أخرى.";
-    // }
+    
   }
+
+
 }

@@ -1,18 +1,22 @@
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/myvolounting.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyVolunteerService {
-  final Dio dio;
+    final String baseUrl = Url.url;
 
-  MyVolunteerService({required this.dio});
+
 
   Future<List<Volunteer>> fetchVolunteers() async {
     try {
-      
+            final dio = Dio();
+
  final prefs = await SharedPreferences.getInstance();
-      final token = prefs.getString('token') ?? '';      final response = await dio.get(
-        'http://192.168.28.158:8000/api/myVoluntings',
+      final token = prefs.getString('token') ?? '';  
+          final response = await dio.get(
+                '$baseUrl/myVoluntings',
+
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),

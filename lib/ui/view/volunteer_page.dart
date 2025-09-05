@@ -1,54 +1,71 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hello/models/scheduledTask_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import 'package:hello/blocs/voluntingCamp/scheduledTasks_bloc.dart';
 import 'package:hello/blocs/voluntingCamp/scheduledTasks_state.dart';
+import 'package:hello/blocs/voluntingCamp/task_bloc.dart';
+import 'package:hello/blocs/voluntingCamp/task_event.dart';
 import 'package:hello/blocs/voluntingCamp/voluntCamp_bloc.dart';
 import 'package:hello/blocs/voluntingCamp/voluntCamp_event.dart';
 import 'package:hello/blocs/voluntingCamp/voluntCamp_state.dart';
 import 'package:hello/core/color.dart';
 import 'package:hello/models/voluntingCampaigns_model.dart';
 import 'package:hello/services/voluntingCampaigns_service.dart';
-import 'package:hello/ui/view/home_page.dart';
 import 'package:hello/ui/view/volunteerCompaign_detail_oage.dart';
-import 'package:hello/widgets/elevatedButton.dart';
+import 'package:hello/blocs/voluntingCamp/scheduledTasks_event.dart';
 
 class VolunteerCampaignsPage extends StatelessWidget {
+  static String id = "Camp";
 
   VolunteerCampaignsPage({super.key,});
 
- 
-@override
+  @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          CampaignBloc(CampaignService())..add(FetchCampaigns()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create:
+              (context) =>
+                  CampaignBloc(CampaignService())..add(FetchCampaigns()),
+        ),
+        BlocProvider(
+          create:
+              (context) =>
+                  ScheduledTasksBloc(CampaignService())
+                    ..add(FetchScheduledTasks()),
+        ),
+        BlocProvider(create: (context) => TaskBloc(CampaignService())),
+      ],
       child: Scaffold(
         body: DefaultTabController(
           length: 2,
           child: Stack(
             children: [
-              // ✅ نفس الهيدر تبعك
+              // الهيدر
               Container(
                 height: 220,
                 width: double.infinity,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
                       Color(0XFF4B4D40),
-                      const Color.fromARGB(255, 115, 123, 114),
-                      const Color(0xFFb3beb0),
+                      Color.fromARGB(255, 115, 123, 114),
+                      Color(0xFFb3beb0),
                     ],
                     begin: AlignmentDirectional.topStart,
                     end: AlignmentDirectional.bottomEnd,
                   ),
                 ),
                 alignment: Alignment.center,
-                child: Image.asset('assets/images/logo2.png',
-                    height: 60, width: 60),
+                child: Image.asset(
+                  'assets/images/logo2.png',
+                  height: 60,
+                  width: 60,
+                ),
               ),
-
               // زر رجوع
               Positioned(
                 top: 20,
@@ -98,7 +115,7 @@ class VolunteerCampaignsPage extends StatelessWidget {
                 ),
               ),
 
-              // ✅ جسم الصفحة
+              // الجسم
               Padding(
                 padding: const EdgeInsets.only(top: 150),
                 child: Stack(
@@ -121,7 +138,7 @@ class VolunteerCampaignsPage extends StatelessWidget {
                             labelColor: zeti,
                             unselectedLabelColor: Light_Green,
                             tabs: const [
-                              Tab(text: 'كل الحملات' ),
+                              Tab(text: 'كل الحملات'),
                               Tab(text: 'جدولة المهام'),
                             ],
                           ),
@@ -130,120 +147,163 @@ class VolunteerCampaignsPage extends StatelessWidget {
                         Expanded(
                           child: TabBarView(
                             children: [
+                              // كل الحملات
                               BlocBuilder<CampaignBloc, CampaignState>(
                                 builder: (context, state) {
                                   if (state is CampaignLoading) {
                                     return const Center(
-                                        child: CircularProgressIndicator());
+                                      child: CircularProgressIndicator(),
+                                    );
                                   } else if (state is CampaignLoaded) {
                                     return buildCampaignsList(
-                                        context, state.campaigns);
+                                      context,
+                                      state.campaigns,
+                                    );
                                   } else if (state is CampaignError) {
                                     return Center(
-                                        child: Text(
-                                      state.message,
-                                      style: const TextStyle(color: Colors.red , fontFamily: 'Zain'),
-                                    ));
+                                      child: Text(
+                                        state.message,
+                                        style: const TextStyle(
+                                          color: Colors.red,
+                                          fontFamily: 'Zain',
+                                        ),
+                                      ),
+                                    );
                                   }
                                   return Container();
                                 },
                               ),
 
- BlocBuilder<ScheduledTasksBloc, ScheduledTasksState>(
-                              builder: (context, state) {
-                                if (state is ScheduledTasksLoading) {
-                                  return const Center(child: CircularProgressIndicator());
-                                } else if (state is ScheduledTasksError) {
-                                  return Center(child: Text('حدث خطأ: ${state.message}'));
+                              BlocBuilder<
+                                ScheduledTasksBloc,
+                                ScheduledTasksState
+                              >(
+                                builder: (context, state) {
+                                  if (state is ScheduledTasksLoading) {
+                                    return const Center(
+                                      child: CircularProgressIndicator(),
+                                    );
+                                  } else if (state is ScheduledTasksError) {
+                                    return Center(
+                                      child: Text('حدث خطأ: ${state.message}'),
+                                    );
+                                  } else if (state is NoVolunteerProfile) {
+                                    return Center(
+                                      child: Text(
+                                        state.message,
+                                        style: const TextStyle(
+                                          color: Colors.orange,
+                                        ),
+                                      ),
+                                    );
+                                  } else if (state is ScheduledTasksLoaded) {
+                                    final tasks = state.tasks;
+                                    print(
+                                      "🎯 ScheduledTasksLoaded فيه ${state.tasks.length} مهام",
+                                    );
 
-                                } 
-                                else if (state is NoVolunteerProfile) {
-  return Center(
-    child: Card(
-      color: Colors.orange[100],
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      margin: const EdgeInsets.all(16),
+                                    if (tasks.isEmpty) {
+                                      return const Center(
+                                        child: Text('لا توجد مهام مجدولة'),
+                                      );
+                                    }
+
+return ListView.builder(
+  padding: const EdgeInsets.all(30),
+  itemCount: tasks.length,
+  itemBuilder: (context, index) {
+    final task = tasks[index];
+    int currentStatusId = task.statusId; // الحالة من الباك مباشرة
+
+    return Card(
+      color: babygreen,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      margin: const EdgeInsets.only(bottom: 15),
       child: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 40),
-            const SizedBox(height: 12),
             Text(
-               state.message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontFamily: 'Zain',
-                fontSize: 16,
+              task.campaignName,
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontSize: 18,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: zeti,
               ),
             ),
+            const SizedBox(height: 8),
+            Text('المهمة: ${task.taskName}',
+                textDirection: TextDirection.rtl,
+                style: TextStyle(color: zeti)),
+            const SizedBox(height: 8),
+            Text('تاريخ الانتهاء: ${task.campaignEndTime}',
+                textDirection: TextDirection.rtl,
+                style: TextStyle(color: zeti)),
+            const SizedBox(height: 8),
+
+            // الحالة
+            Text(
+              'الحالة: ${task.status ?? "غير معروف"}',
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                color: zeti,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // زر الاعتذار يطلع بس إذا الحالة "قادمة" (1)
+            if (currentStatusId == 1)
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.redAccent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                onPressed: () {
+                  print("🔴 تم الاعتذار عن Task ${task.taskId}");
+
+                  // ابعت تحديث للباك
+                  context.read<TaskBloc>().add(
+                        UpdateTaskStatus(
+                          taskId: task.taskId,
+                          statusId: 3, // اعتذار
+                        ),
+                      );
+
+                  // رجّع تحديث القائمة من الباك
+                  context
+                      .read<ScheduledTasksBloc>()
+                      .add(FetchScheduledTasks());
+                },
+                child: const Text(
+                  'اعتذار',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontFamily: 'Zain',
+                  ),
+                ),
+              ),
           ],
         ),
       ),
-    ),
-  );
-}
+    );
+  },
+);
 
-                                else if (state is ScheduledTasksLoaded) {
-                                  final tasks = state.tasks;
-                                  if (tasks.isEmpty) return Center(child: Text('لا توجد مهام مجدولة'));
-                                  return ListView.builder(
-                                    padding: const EdgeInsets.all(16),
-                                    itemCount: tasks.length,
-                                    itemBuilder: (context, index) {
-                                      final task = tasks[index];
-                                      String currentStatus = task.status;
-                                      return StatefulBuilder(
-                                        builder: (context, setState) {
-                                          return Card(
-                                            color: Colors.green[100],
-                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                            margin: const EdgeInsets.only(bottom: 15),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(16),
-                                              child: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.end,
-                                                children: [
-                                                  Text(task.campaignName, textDirection: TextDirection.rtl, style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                                  SizedBox(height: 8),
-                                                  Text('المهمة: ${task.taskName}', textDirection: TextDirection.rtl),
-                                                  SizedBox(height: 8),
-                                                  Text('تاريخ الانتهاء: ${task.campaignEndTime}', textDirection: TextDirection.rtl),
-                                                  SizedBox(height: 8),
-                                                  DropdownButton<String>(
-                                                    value: currentStatus,
-                                                    items: ['مقبولة', 'انسحاب'].map((status) {
-                                                      return DropdownMenuItem<String>(
-                                                        value: status,
-                                                        child: Text(status),
-                                                      );
-                                                    }).toList(),
-                                                    onChanged: (newStatus) {
-                                                      if (newStatus != null) {
-                                                        setState(() => currentStatus = newStatus);
-                                                      }
-                                                    },
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  );
-                                }
-                                return Container();
-                              },
-                            ),
-                          ],
+                                  }
+                                  return Container();
+                                },
+                              ),
+                            ],
+                          ),
                         ),
-                      ),                            ],
-                       
-                      
+                      ],
                     ),
                   ],
                 ),
@@ -255,116 +315,7 @@ class VolunteerCampaignsPage extends StatelessWidget {
     );
   }
 
-
-// Widget buildScheduledList(
-//   BuildContext context,
-//   List<Map<String, dynamic>> campaigns,
-// ) {
-//   // final List<Map<String, dynamic>> fakeTasks = [
-//   //   {
-//   //     'title': 'حملة تنظيف الشاطئ',
-//   //     'taskName': 'جمع النفايات البلاستيكية',
-//   //     'status': 'مقبولة',
-//   //     'endDate': '2025-08-05',
-//   //   },
-//   //   {
-//   //     'title': 'حملة زراعة الأشجار',
-//   //     'taskName': 'زرع الأشجار في الحديقة العامة',
-//   //     'status': 'مقبولة',
-//   //     'endDate': '2025-08-10',
-//   //   },
-//   // ];
-
-//   return ListView.builder(
-//     padding: const EdgeInsets.all(30),
-//     itemCount: fakeTasks.length,
-//     itemBuilder: (context, index) {
-//       final task = fakeTasks[index];
-//       String currentStatus = task['status'] ?? 'مقبولة';
-
-//       return StatefulBuilder(
-//         builder: (context, setState) {
-//           return Card(
-//             color: babygreen,
-//             shape: RoundedRectangleBorder(
-//               borderRadius: BorderRadius.circular(20),
-//             ),
-//             elevation: 6,
-//             margin: const EdgeInsets.only(bottom: 15),
-//             child: Padding(
-//               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 22),
-//               child: Column(
-//                 crossAxisAlignment: CrossAxisAlignment.end,
-//                 children: [
-//                   Text(
-//                        textDirection: TextDirection.rtl,
-//                     task['title'] ?? '',
-//                     style: TextStyle(
-//                       fontSize: 20,
-//                       fontWeight: FontWeight.bold,
-//                       color: zeti,
-//                        fontFamily: 'Zain',
-//                     ),
-//                   ),
-//                   SizedBox(height: 8),
-//                   Text(
-//              textDirection: TextDirection.rtl,
-
-                  
-//                     'المهمة: ${task['taskName'] ?? ''}',
-//                     style: TextStyle(
-//                       fontSize: 16,
-//                       color: medium_Green,
-//                        fontFamily: 'Zain',
-//                     ),
-//                   ),
-//                   SizedBox(height: 8),
-//                   Text(
-//                                            textDirection: TextDirection.rtl,
-
-//                     'تاريخ الانتهاء: ${task['endDate'] ?? ''}',
-//                     style: TextStyle(
-//                       fontSize: 14,
-//                       color:  Color.fromARGB(255, 247, 119, 134),
-//                        fontFamily: 'Zain',
-//                     ),
-//                   ),
-//                   SizedBox(height: 16),
-
-//                   DropdownButton<String>(
-//                     value: currentStatus,
-//                     items: ['مقبولة', 'انسحاب'].map((status) {
-//                       return DropdownMenuItem<String>(
-//                         value: status,
-//                         child: Text(
-//                           status,
-//                           style: TextStyle(
-//                             color: status == 'انسحاب' ?  Color.fromARGB(255, 247, 119, 134) : zeti,
-//                              fontFamily: 'Zain',
-
-                      
-//                           ),
-//                         ),
-//                       );
-//                     }).toList(),
-//                     onChanged: (newStatus) {
-//                       if (newStatus != null) {
-//                         setState(() {
-//                           currentStatus = newStatus;
-//                         });
-//                       }
-//                     },
-//                   ),
-//                 ],
-//               ),
-//             ),
-//           );
-//         },
-//       );
-//     },
-//   );
-// }
-
+  /// قائمة الحملات
   Widget buildCampaignsList(
     BuildContext context,
     List<CampaignModel> campaigns,
@@ -383,12 +334,11 @@ class VolunteerCampaignsPage extends StatelessWidget {
             category: c.classificationName,
             tasksCount: c.numberOfTasks.toString(),
             onTap: () {
-              int selectedCampaignId = c.id;
-
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => DetailsAssociationcamps(campaignId: selectedCampaignId,),
+                  builder:
+                      (context) => DetailsAssociationcamps(campaignId: c.id),
                 ),
               );
             },
@@ -397,6 +347,8 @@ class VolunteerCampaignsPage extends StatelessWidget {
       ),
     );
   }
+
+  /// كرت حملة
   Widget buildVolunteerCampaignCard({
     required String imageUrl,
     required String title,
@@ -408,8 +360,7 @@ class VolunteerCampaignsPage extends StatelessWidget {
     bool isActive = status == 'نشطة';
 
     return InkWell(
-      onTap: onTap, 
-
+      onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 20),
         padding: const EdgeInsets.all(16),
@@ -420,7 +371,7 @@ class VolunteerCampaignsPage extends StatelessWidget {
             BoxShadow(
               color: Colors.black26.withOpacity(0.15),
               blurRadius: 8,
-              offset: Offset(0, 4),
+              offset: const Offset(0, 4),
             ),
           ],
         ),
@@ -428,9 +379,7 @@ class VolunteerCampaignsPage extends StatelessWidget {
           children: [
             Row(
               textDirection: TextDirection.rtl,
-
               children: [
-                //  صورة الحملة
                 ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: Image.network(
@@ -440,10 +389,7 @@ class VolunteerCampaignsPage extends StatelessWidget {
                     fit: BoxFit.cover,
                   ),
                 ),
-
-                SizedBox(width: 12),
-
-                //  نصوص يسار الصورة
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
@@ -454,21 +400,18 @@ class VolunteerCampaignsPage extends StatelessWidget {
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: zeti,
-                          fontFamily: 'Zain'
+                          fontFamily: 'Zain',
                         ),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                         textAlign: TextAlign.right,
                       ),
-                      SizedBox(height: 6),
-
-                      // ✅ التصنيف والحالة
+                      const SizedBox(height: 6),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // ✅ الحالة (يسار السطر)
                           Container(
-                            padding: EdgeInsets.symmetric(
+                            padding: const EdgeInsets.symmetric(
                               horizontal: 12,
                               vertical: 5,
                             ),
@@ -485,14 +428,17 @@ class VolunteerCampaignsPage extends StatelessWidget {
                                 color:
                                     isActive
                                         ? zeti
-                                        : Color.fromARGB(255, 247, 119, 134),
+                                        : const Color.fromARGB(
+                                          255,
+                                          247,
+                                          119,
+                                          134,
+                                        ),
                                 fontWeight: FontWeight.bold,
                                 fontSize: 13,
                               ),
                             ),
                           ),
-
-                          // ✅ التصنيف (يمين السطر مع الأيقونة)
                           Row(
                             children: [
                               Text(
@@ -502,10 +448,10 @@ class VolunteerCampaignsPage extends StatelessWidget {
                                   fontWeight: FontWeight.w500,
                                   color: zeti,
                                   letterSpacing: 0.5,
-                                  fontFamily: 'Zain'
+                                  fontFamily: 'Zain',
                                 ),
                               ),
-                              SizedBox(width: 6),
+                              const SizedBox(width: 6),
                               Icon(
                                 Icons.category_outlined,
                                 size: 18,
@@ -520,11 +466,8 @@ class VolunteerCampaignsPage extends StatelessWidget {
                 ),
               ],
             ),
-
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             Divider(color: Colors.grey[300]),
-
-            //  عدد المهام
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
@@ -533,11 +476,11 @@ class VolunteerCampaignsPage extends StatelessWidget {
                   style: TextStyle(
                     color: zeti,
                     fontWeight: FontWeight.w600,
-                    fontFamily: 'Zain'
+                    fontFamily: 'Zain',
                   ),
                 ),
-                SizedBox(width: 6),
-                Icon(
+                const SizedBox(width: 6),
+                const Icon(
                   Icons.checklist_rounded,
                   size: 18,
                   color: Color.fromARGB(255, 247, 119, 134),

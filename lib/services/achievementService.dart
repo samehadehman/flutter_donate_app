@@ -1,9 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/achievementSummary.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AchievementService {
-  static Future<AchievementSummary?> fetchAchievementSummary() async {
+  final String baseUrl = Url.url;
+   Future<AchievementSummary?> fetchAchievementSummary() async {
     try {
    
       final dio = Dio();
@@ -11,7 +13,7 @@ class AchievementService {
       final token = prefs.getString('token') ?? '';
     
       final response = await dio.get(
-        'http://192.168.28.158:8000/api/mySummryAchievements',
+        '$baseUrl/mySummryAchievements',
         options: Options(
           headers: {
             'Authorization': 'Bearer $token',

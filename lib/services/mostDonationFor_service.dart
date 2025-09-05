@@ -1,18 +1,19 @@
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/mostDonationFor.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ImpactCampaignService {
-  final Dio dio;
+      final dio = Dio();
+  final String baseUrl = Url.url;
 
-  ImpactCampaignService({required this.dio});
 
   Future<List<ImpactCampaign>> fetchImpactCampaigns() async {
     try {
  final prefs = await SharedPreferences.getInstance();
       final token = prefs.getString('token') ?? '';     
        final response = await dio.get(
-        'http://192.168.28.158:8000/api/mostDonationFor',
+        '$baseUrl/mostDonationFor',
         options: Options(
           headers: {'Authorization': 'Bearer $token'},
         ),

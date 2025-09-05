@@ -1,8 +1,11 @@
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/emergency_model.dart';
 
 class EmergencyCampaignsService {
-  final String baseUrl = 'http://192.168.28.158:8000/api';
+    final String baseUrl = Url.url;
+
+  // final String baseUrl = 'http://192.168.137.134:8000/api';
   final Dio dio = Dio();
 
   Future<List<EmergencyCampaign>?> getEmergencyCampaigns(String token) async {

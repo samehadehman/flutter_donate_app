@@ -7,6 +7,7 @@ import 'package:hello/widgets/NavBar.dart';
 
 
 class AboutPage extends StatelessWidget {
+  
   const AboutPage({super.key});
 
   @override
@@ -102,7 +103,7 @@ class AboutPage extends StatelessWidget {
                     topLeft: Radius.circular(55),
                     topRight: Radius.circular(55),
                   ),
-                  color: Color(0XFFF2F4EC),
+                  color: const Color.fromARGB(255, 252, 248, 241),
                 ),
             
    child:  
@@ -180,7 +181,9 @@ class AboutPage extends StatelessWidget {
       required String subtitle,
       required VoidCallback onTap}) {
     return Material(
-      color: babygreen,
+      ///////////////////////
+      color:const Color(0xFFb3beb0),
+
       borderRadius: BorderRadius.circular(20),
       child: InkWell(
         borderRadius: BorderRadius.circular(20),

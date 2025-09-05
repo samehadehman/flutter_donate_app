@@ -12,6 +12,7 @@ import 'package:hello/blocs/statistics/bloc.dart';
 import 'package:hello/blocs/statistics/event.dart';
 import 'package:hello/blocs/statistics/state.dart';
 import 'package:hello/core/color.dart';
+import 'package:hello/models/scheduledTask_model.dart';
 import 'package:hello/models/search.dart';
 import 'package:hello/services/emergency_campaigns_service.dart';
 import 'package:hello/services/search_service.dart';
@@ -56,18 +57,7 @@ class SimpleSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    // if (query.isNotEmpty) {
-    //   print("🔍 Searching for: $query");
-
-    //   _getToken().then((token) {
-    //     if (token != null) {
-    //       searchBloc.add(SearchCampaignsEvent(query, token)); // ✅ صححناها
-    //     } else {
-    //       print("❌ No token found");
-    //     }
-    //   });
-    // }
-
+  
     return BlocBuilder<SearchBloc, SearchState>(
       bloc: searchBloc,
       builder: (context, state) {
@@ -127,14 +117,16 @@ class SimpleSearchDelegate extends SearchDelegate<String> {
 // ========== Home Page ==========
 
 class HomePage extends StatelessWidget {
-  HomePage({super.key});
+    static String id = "home";
+
+  HomePage({super.key,});
 
   final ValueNotifier<int> floatingStateNotifier = ValueNotifier<int>(0);
 final SearchService searchService = SearchService(); // هذا فقط لتعريف الـ Bloc
   late final SearchBloc searchBloc = SearchBloc(searchService);
-
   @override
   Widget build(BuildContext context) {
+ 
     return BlocProvider.value(
       value: searchBloc,
       child: MaterialApp(
@@ -142,9 +134,9 @@ final SearchService searchService = SearchService(); // هذا فقط لتعري
         home: Scaffold(
           bottomNavigationBar: BottomNavBar(currentIndex: 0, onTap: (index) {}),
           floatingActionButton: const GlobalDonationFab(),
-          backgroundColor: white,
+          backgroundColor: const Color.fromARGB(255, 252, 248, 241),
           appBar: AppBar(
-            backgroundColor: white,
+            backgroundColor: const Color.fromARGB(255, 252, 248, 241),
             title: Row(
               children: [
                 Container(
@@ -708,7 +700,6 @@ Widget buildEmergencyCard({
     ],
   );
 }
-
 Widget sectionCard(
   BuildContext context,
   String title,
@@ -716,42 +707,65 @@ Widget sectionCard(
   Widget targetPage,
 ) {
   return Container(
-    margin: EdgeInsets.symmetric(horizontal: 8),
+    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 6),
     child: Column(
       children: [
         Material(
-          color: babygreen,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(25),
-            side: BorderSide(color: medium_Green),
-          ),
+          elevation: 6,
+          borderRadius: BorderRadius.circular(25),
           child: InkWell(
             borderRadius: BorderRadius.circular(25),
-            splashColor: white.withOpacity(0.3),
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (_) => targetPage),
               );
             },
-
-            child: Container(
-              width: 80,
-              height: 80,
-              child: Center(child: Icon(iconData, color: zeti, size: 30)),
+            child: Ink(
+              width: 70,
+              height: 70,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25),
+                gradient: LinearGradient(
+                  colors: [Light_Green.withOpacity(0.9), white],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: zeti.withOpacity(0.3),
+                    blurRadius: 6,
+                    offset: Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Icon(
+                  iconData,
+                  color: zeti,
+                  size: 34,
+                ),
+              ),
             ),
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 10),
         SizedBox(
-          width: 80,
+          width: 90,
           child: Text(
             title,
             style: TextStyle(
               color: zeti,
               fontWeight: FontWeight.bold,
-              fontSize: 14,
+              fontSize: 15,
               fontFamily: 'Zain',
+              shadows: [
+                Shadow(
+                  color: Colors.black26,
+                  blurRadius: 4,
+                  offset: Offset(1, 1),
+                ),
+              ],
             ),
             textAlign: TextAlign.center,
             maxLines: 2,
@@ -762,6 +776,7 @@ Widget sectionCard(
     ),
   );
 }
+
 
 Widget buildStatBox(String title, String value) {
   return Container(
@@ -778,7 +793,7 @@ Widget buildStatBox(String title, String value) {
           style: TextStyle(
             color: zeti,
             fontSize: 14,
-            fontWeight: FontWeight.w500,
+            fontWeight: FontWeight.bold,
             fontFamily: 'Zain',
           ),
           textAlign: TextAlign.center,

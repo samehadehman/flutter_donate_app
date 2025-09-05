@@ -10,7 +10,7 @@ class ElevatedButtonWidget extends StatelessWidget {
     required this.textElevated,
     required this.height,
     required this.width,
-    required this.onPressed,
+    required this.onPressed, 
   });
 
   @override

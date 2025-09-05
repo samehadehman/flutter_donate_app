@@ -3,6 +3,7 @@ class ScheduledTask {
   final String campaignName;
   final String taskName;
   final String campaignEndTime;
+   final int statusId;
   final String status;
 
   ScheduledTask({
@@ -10,6 +11,8 @@ class ScheduledTask {
     required this.campaignName,
     required this.taskName,
     required this.campaignEndTime,
+      required this.statusId,
+
     required this.status,
   });
 
@@ -19,6 +22,8 @@ class ScheduledTask {
       campaignName: json['campaign_name'] ?? '',
       taskName: json['task_name'] ?? '',
       campaignEndTime: json['campaign_end_time'] ?? '',
+            statusId: json['status_id']?['id'] ?? 0,      // 👈 هاد الجديد
+
       status: json['status_id']?['status'] ?? '',
     );
   }

@@ -1,12 +1,14 @@
 
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/login_model.dart';
 import 'package:hello/models/register_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
+    final String baseUrl = Url.url;
+
   final Dio dio = Dio();
-final String baseUrl = "http://192.168.28.158:8000/api";
 
 
   Future<String> register({
@@ -116,7 +118,40 @@ final String baseUrl = "http://192.168.28.158:8000/api";
     }
   }
 
+  /// ✅ تابع تسجيل الخروج
+  Future<String> logout() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString('token');
+  print("🔹 التوكن الحالي: $token");
 
+      if (token == null || token.isEmpty) {
+        throw Exception("لم يتم العثور على التوكن. المستخدم غير مسجل دخول.");
+      }
+
+      final response = await dio.get(
+        "$baseUrl/logout",
+        options: Options(
+          headers: {
+            "Accept": "application/json",
+            "Authorization": "Bearer $token",
+          },
+        ),
+      );
+
+      print("Logout response: ${response.data}");
+
+      // ✅ امسح التوكن من التخزين المحلي
+      await prefs.remove('token');
+    print("🔹 استجابة الخادم: ${response.data}");
+
+      return response.data["message"] ?? "تم تسجيل الخروج بنجاح";
+    } on DioError catch (e) {
+      throw Exception(e.response?.data["message"] ?? "خطأ أثناء تسجيل الخروج");
+    } catch (e) {
+      throw Exception("خطأ غير متوقع أثناء تسجيل الخروج");
+    }
+  }
   String _handleError(Object error) {
     if (error is DioError) {
       try {

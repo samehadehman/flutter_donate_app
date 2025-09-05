@@ -5,33 +5,46 @@ import 'package:hello/blocs/volunteerFile/volunteerprodetail_state.dart';
 import 'package:hello/core/color.dart';
 import 'package:hello/ui/view/volunteer_profile_form_page.dart';
 
+import '../../blocs/volunteerFile/volunteerform_bloc.dart';
+import '../../blocs/volunteerFile/volunteerform_event.dart';
+
+import '../../blocs/volunteerFile/volunteerform_state.dart';
+import '../../models/createvolunteerpro_model.dart';
+import '../../models/showVolunteerpro_model.dart';
+
 
 class VolunteerProfileDetailsPage extends StatelessWidget {
-  const VolunteerProfileDetailsPage({super.key});
+  
+
+  const VolunteerProfileDetailsPage({super.key, });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: zeti,
-        child: Icon(Icons.edit, color: white),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => VolunteerProfileFormPage()),
+    return BlocBuilder<VolunteerProfileBloc, VolunteerProfileState>(
+      builder: (context, state) {
+        if (state is VolunteerProfileLoading) {
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
           );
-        },
-      ),
-      body: BlocBuilder<VolunteerProfileDetailBloc, VolunteerProfileDetailState>(
-        builder: (context, state) {
-              print("🔄 Current state: $state"); // ✅ Debug
-
-          if (state is VolunteerProfileDetailLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is VolunteerProfileDetailLoaded) {
-            final profile = state.profile;
-
-            return Stack(
+        } else if (state is VolunteerProfileDetailsLoaded) {
+          final profile = state.profile;
+          return Scaffold(
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: zeti,
+              child: Icon(Icons.edit, color: white),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => VolunteerProfileFormPage(existingProfile: profile),
+                  ),
+                ).then((_) {
+                  // ⚡️ بعد تعديل الملف، نجدد البيانات فورًا
+                  context.read<VolunteerProfileBloc>().add(GetVolunteerDetailProfileEvent());
+                });
+              },
+            ),
+            body: Stack(
               children: [
                 // ✅ الخلفية
                 Container(
@@ -70,7 +83,11 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
                     ),
                     child: IconButton(
                       icon: const Icon(Icons.arrow_forward_ios, color: Color(0XFFF2F4EC)),
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+    // ⚡️ قبل الرجوع للصفحة السابقة
+    context.read<VolunteerProfileBloc>().add(GetVolunteerProfileEvent());
+    Navigator.pop(context);
+  },
                     ),
                   ),
                 ),
@@ -103,13 +120,15 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.only(top: 150),
                   child: Container(
-                      height: MediaQuery.of(context).size.height,
-                    decoration: const BoxDecoration(
+                    height: MediaQuery.of(context).size.height,
+
+
+decoration: const BoxDecoration(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(55),
                         topRight: Radius.circular(55),
                       ),
-                      color: Color.fromARGB(255, 252, 248, 241)
+                      color: Color.fromARGB(255, 252, 248, 241),
                     ),
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(16),
@@ -131,25 +150,33 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
                           buildInfoCard(
                             icon: Icons.access_time,
                             title: 'عدد الساعات المتاحة',
-                            value: profile.availabilityHours.isNotEmpty ? profile.availabilityHours : 'لم تتم الإضافة بعد',
+                            value: profile.availabilityHours.isNotEmpty
+                                ? profile.availabilityHours
+                                : 'لم تتم الإضافة بعد',
                           ),
                           const SizedBox(height: 12),
                           buildInfoCard(
                             icon: Icons.favorite,
                             title: 'الأعمال المفضلة',
-                            value: profile.preferredTasks.isNotEmpty ? profile.preferredTasks : 'لم تتم الإضافة بعد',
+                            value: profile.preferredTasks.isNotEmpty
+                                ? profile.preferredTasks
+                                : 'لم تتم الإضافة بعد',
                           ),
                           const SizedBox(height: 12),
                           buildInfoCard(
                             icon: Icons.school,
                             title: 'التخصص الأكاديمي',
-                            value: profile.academicMajor.isNotEmpty ? profile.academicMajor : 'لم تتم الإضافة بعد',
+                            value: profile.academicMajor.isNotEmpty
+                                ? profile.academicMajor
+                                : 'لم تتم الإضافة بعد',
                           ),
                           const SizedBox(height: 12),
                           buildInfoCard(
                             icon: Icons.history,
                             title: 'أعمال تطوعية سابقة',
-                            value: profile.previousVolunteerWork.isNotEmpty ? profile.previousVolunteerWork : 'لم تتم الإضافة بعد',
+                            value: profile.previousVolunteerWork.isNotEmpty
+                                ? profile.previousVolunteerWork
+                                : 'لم تتم الإضافة بعد',
                           ),
                           const SizedBox(height: 100),
                         ],
@@ -158,17 +185,20 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
                   ),
                 ),
               ],
-            );
-          } else if (state is VolunteerProfileDetailError) {
-            return Center(child: Text("❌ ${state.message}"));
-          }
-          return const Center(child: Text("ما في بيانات بعد"));
-        },
-      ),
+            ),
+          );
+        } else if (state is VolunteerProfileError) {
+          return Scaffold(
+            body: Center(child: Text("❌ ${state.message}")),
+          );
+        }
+
+        return const Scaffold(
+          body: Center(child: Text("ما في بيانات بعد")),
+        );
+      },
     );
   }
-}
-
 
   Widget buildInfoCard({
     required IconData icon,
@@ -186,7 +216,9 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
                 color: zeti.withOpacity(0.1),
-                shape: BoxShape.circle,
+
+
+shape: BoxShape.circle,
               ),
               child: Icon(icon, color: zeti, size: 24),
             ),
@@ -223,4 +255,4 @@ class VolunteerProfileDetailsPage extends StatelessWidget {
       ),
     );
   }
-
+}

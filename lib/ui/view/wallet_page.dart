@@ -6,6 +6,7 @@ import 'package:hello/core/color.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class CreateWalletPage extends StatefulWidget {
+  static String id = "wal";
 
   final bool isEdit;
   final String? currentAmount;
@@ -162,6 +163,7 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
             Padding(
               padding: const EdgeInsets.only(top: 150),
               child: Container(
+                
                 decoration:  BoxDecoration(
                    boxShadow: [
                     BoxShadow(
@@ -178,7 +180,7 @@ class _CreateWalletPageState extends State<CreateWalletPage> {
                     topLeft: Radius.circular(55),
                     topRight: Radius.circular(55),
                   ),
-                  color: Color(0XFFF2F4EC),
+                  color: const Color.fromARGB(255, 252, 248, 241),
                 ),
   
    child:  

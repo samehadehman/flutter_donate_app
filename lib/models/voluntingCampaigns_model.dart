@@ -26,7 +26,7 @@ class CampaignModel {
 
     if (rawPhoto.startsWith('http://localhost')) {
       rawPhoto = rawPhoto.replaceFirst(
-          'http://localhost', 'http://192.168.28.158'); 
+          'http://localhost', 'http://192.168.173.158'); 
     }
 
     return CampaignModel(
@@ -39,3 +39,30 @@ class CampaignModel {
     );
   }
 }
+
+class TaskStatusModel {
+  final int taskId;
+  final int volunteerProfileId;
+  final int volunteerTaskId;
+  final int statusId;
+  final String statusName;
+
+  TaskStatusModel({
+    required this.taskId,
+    required this.volunteerProfileId,
+    required this.volunteerTaskId,
+    required this.statusId,
+    required this.statusName,
+  });
+
+  factory TaskStatusModel.fromJson(Map<String, dynamic> json) {
+    return TaskStatusModel(
+      taskId: json['id'] ?? 0,
+      volunteerProfileId: json['volunteer_profile_id'] ?? 0,
+      volunteerTaskId: int.tryParse(json['volunteer_task_id'].toString()) ?? 0,
+         statusId: json['status']?['id'] ?? 0,      // 👈 خذ من object
+    statusName: json['status']?['name'] ?? '', 
+    );
+  }
+}
+

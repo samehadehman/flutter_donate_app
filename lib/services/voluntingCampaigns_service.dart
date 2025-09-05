@@ -1,16 +1,20 @@
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/scheduledTask_model.dart';
 import 'package:hello/models/voluntingCampaignDetails_model.dart';
 import 'package:hello/models/voluntingCampaigns_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CampaignService {
+    final String baseUrl = Url.url;
+
   final Dio _dio = Dio();
 
   Future<List<CampaignModel>> getAllCampaigns(String token) async {
     try {
       final response = await _dio.get(
-        "http://192.168.28.158:8000/api/getAllVoluntingCampigns",
+                '$baseUrl/getAllVoluntingCampigns',
+
         options: Options(
           headers: {"Authorization": "Bearer $token"},
         ),
@@ -29,7 +33,9 @@ class CampaignService {
 
    Future<CampaignDetailsModel> getCampaignDetails(int id , String token) async {
     final response = await _dio.get(
-      "http://192.168.28.158:8000/api/getVoluntingCampigndetails/$id",
+              '$baseUrl/getVoluntingCampigndetails/$id',
+
+    
       options: Options(
         headers: {"Authorization": "Bearer $token"},
       ),
@@ -48,10 +54,13 @@ class CampaignService {
  Future<Task> getTaskDetails(int taskId, String token) async {
   try {
     final prefs = await SharedPreferences.getInstance();
-final token = prefs.getString('token') ?? '';
-
+    final token = prefs.getString('token') ?? '';
+   final pref = await SharedPreferences.getInstance();
+   final savedTaskId = prefs.getInt('task_id') ?? 0;
+    print('$savedTaskId');
     final response = await _dio.get(
-      "http://192.168.28.158:8000/api/getTaskDetails/$taskId",
+              '$baseUrl/getTaskDetails/$taskId',
+
       options: Options(
         headers: {"Authorization": "Bearer $token" ,
         "Accept": "application/json"
@@ -66,6 +75,8 @@ final token = prefs.getString('token') ?? '';
 
     if (response.statusCode == 200 && response.data['status'] == 1) {
       final taskJson = Map<String, dynamic>.from(response.data['data']);
+print("Raw response data: ${response.data}");
+
       print('Task JSON: $taskJson');
       return Task.fromJson(taskJson);
     } else {
@@ -82,11 +93,39 @@ final token = prefs.getString('token') ?? '';
   }
 }
 
-
- Future<List<ScheduledTask>> getScheduledTasks(String token) async {
+Future<String> volunteerForTask(int taskId, String token) async {
+try{
+ final prefs = await SharedPreferences.getInstance();
+final token = prefs.getString('token') ?? '';
 
     final response = await _dio.get(
-      "http://192.168.28.158:8000/api/upComingTasks",
+              '$baseUrl/voluntingRequest/$taskId',
+
+      options: Options(headers: {"Authorization": "Bearer $token"}),
+    );
+
+     print("🚀 volunteerForTask: ${response.data}");
+   // print("✅ volunteerForTask: ${response.data['data'][0]}");
+        if (response.statusCode == 200 && response.data != null) {
+
+    return response.data['message'] ?? "تم إرسال طلبك للمراجعة";}
+
+    
+    else{
+            return "فشل إرسال الطلب";
+
+    }
+}catch(e){
+    return "خطأ أثناء إرسال الطلب: $e";
+}
+  }
+
+ Future<List<ScheduledTask>> getScheduledTasks(String token) async {
+ final prefs = await SharedPreferences.getInstance();
+final token = prefs.getString('token') ?? '';
+    final response = await _dio.get(
+              '$baseUrl/upComingTasks',
+
       options: Options(
         headers: {"Authorization": "Bearer $token"},
         validateStatus: (status) {
@@ -95,8 +134,8 @@ final token = prefs.getString('token') ?? '';
     },
       ),
     );
-print('Status Code: ${response.statusCode}');
-print('Response Data: ${response.data}');
+  print('Status Code: ${response.statusCode}');
+  print("📥 ScheduledTasks API raw response: ${response.data}");
 
     if (response.statusCode == 200 && response.data['status'] == 1) {
       List<dynamic> data = response.data['data'];
@@ -114,4 +153,32 @@ print('Response Data: ${response.data}');
     
 
   }
+
+
+  Future<TaskStatusModel> updateTaskStatus({
+  required int taskId,
+  // required String token,
+  required int statusId,
+}) async {
+   final prefs = await SharedPreferences.getInstance();
+final token = prefs.getString('token') ?? '';
+  final response = await _dio.post(
+            '$baseUrl/editTaskStatus/$taskId',
+
+    data: {"status_id": statusId},
+    options: Options(
+      headers: {
+        "Authorization": "Bearer $token",
+        "Accept": "application/json",
+      },
+    ),
+  );
+
+  if (response.statusCode == 200 && response.data["status"] == 1) {
+    return TaskStatusModel.fromJson(response.data["data"]);
+  } else {
+    throw Exception("فشل تعديل حالة المهمة: ${response.data}");
+  }
+}
+
 }

@@ -4,11 +4,12 @@ import 'achievement_event.dart';
 import 'achievement_state.dart';
 
 class AchievementBloc extends Bloc<AchievementEvent, AchievementState> {
-  AchievementBloc() : super(AchievementInitial()) {
+  final AchievementService service;
+  AchievementBloc(this.service) : super(AchievementInitial()) {
     on<LoadAchievement>((event, emit) async {
       emit(AchievementLoading());
       try {
-        final summary = await AchievementService.fetchAchievementSummary();
+        final summary = await service.fetchAchievementSummary();
         if (summary != null) {
           emit(AchievementLoaded(summary));
         } else {

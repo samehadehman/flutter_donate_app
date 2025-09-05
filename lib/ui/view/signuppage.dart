@@ -8,6 +8,7 @@ import 'package:hello/ui/view/loginpage.dart';
 import 'package:hello/widgets/elevatedButton.dart';
 
 class Signuppage extends StatefulWidget {
+  
   const Signuppage({super.key});
 
   @override
@@ -269,7 +270,10 @@ class _SignuppageState extends State<Signuppage> {
                       children: [
                         TextButton(
                           onPressed: () {
-                            Navigator.of(context).pushNamed('/loginpage');
+Navigator.pushReplacement(
+  context,
+  MaterialPageRoute(builder: (_) => LoginPage()),
+);
                           },
                           child: Text(
                             "سجل دخولك",

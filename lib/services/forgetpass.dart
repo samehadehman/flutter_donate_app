@@ -1,17 +1,17 @@
 import 'package:dio/dio.dart';
+import 'package:hello/core/url.dart';
 import 'package:hello/models/forgetpass_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 
 class ApiService {
-  static final Dio _dio = Dio(BaseOptions(
-    baseUrl: 'http://192.168.28.158:8000/api',
-    headers: {'Content-Type': 'application/json'},
-  ));
+   static final String baseUrl = Url.url;
+   static   final dio = Dio();
+
 
   // إرسال طلب الفورغيت
   static Future<ForgotPasswordModel> sendForgotPasswordEmail(String email) async {
-    final response = await _dio.post('/userForgotPassword', data: {'email': email.trim()});
+    final response = await dio.post('$baseUrl/userForgotPassword', data: {'email': email.trim()});
     if (response.statusCode == 200) {
       return ForgotPasswordModel.fromJson(response.data);
     } else {
@@ -21,7 +21,7 @@ class ApiService {
 
   // التحقق من الكود
   static Future<VerifyCodeModel> verifyCode(String email, String code) async {
-    final response = await _dio.post('/userCheckCode', data: {'email': email.trim(), 'code': code.trim()});
+    final response = await dio.post('$baseUrl/userCheckCode', data: {'email': email.trim(), 'code': code.trim()});
     if (response.statusCode == 200) {
       return VerifyCodeModel.fromJson(response.data);
     } else {
@@ -31,8 +31,8 @@ class ApiService {
 
   // إعادة تعيين الباسورد
   static Future<ResetPasswordResponse> resetPassword(String email, String code, String password) async {
-    final response = await _dio.post(
-      '/userResetPassword/$code',
+    final response = await dio.post(
+      '$baseUrl/userResetPassword/$code',
       data: {
         'email': email.trim(),
         'code': code.trim(),

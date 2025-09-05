@@ -3,6 +3,7 @@ import 'package:hello/core/color.dart';
 import 'package:hello/ui/view/VolunteerProfileDetailsPage.dart';
 import 'package:hello/ui/view/about_page.dart';
 import 'package:hello/ui/view/home_page.dart';
+import 'package:hello/ui/view/notification.dart';
 import 'package:hello/ui/view/profilePage.dart';
 
 
@@ -46,7 +47,7 @@ class BottomNavBar extends StatelessWidget {
     else if (index == 1) {
       Navigator.push(context, MaterialPageRoute(builder: (_) => ProfilePage()));
     } else if (index == 2) {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => VolunteerProfileDetailsPage()));
+      Navigator.push(context, MaterialPageRoute(builder: (_) => NotificationsPage()));
     } else if (index == 3) {
       Navigator.push(context, MaterialPageRoute(builder: (_) => AboutPage()));
     }
